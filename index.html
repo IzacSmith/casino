@@ -463,12 +463,10 @@ const UPGRADES = [
     levels: [{ cost: 2800, desc: 'Every 8th spin is free — bet is fully refunded regardless of result.' }],
   },
   {
-    id: 'streak_shield', name: 'Streak Shield', maxLevel: 2, iconColor: 'purple',
+    id: 'streak_shield', name: 'Streak Shield', maxLevel: 9999, unlimited: true,
+    baseCost: 2200, costFactor: 1.5, iconColor: 'purple',
     iconSvg: `<svg viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M11 2 L19 6 L19 12 C19 16 15 19.5 11 21 C7 19.5 3 16 3 12 L3 6 Z" stroke="#a060d0" stroke-width="1.8" fill="none"/><text x="11" y="15" text-anchor="middle" font-family="serif" font-size="9" fill="#a060d0">S</text></svg>`,
-    levels: [
-      { cost: 2200, desc: 'A loss while on a streak of 3+ does not reset your streak.' },
-      { cost: 5000, desc: 'Streak protection triggers at streak 2+.' },
-    ],
+    levels: [],
   },
 ];
 
@@ -497,6 +495,12 @@ const strips = [];
 const SYMBOL_H = 100;
 
 function lvl(id) { return state.upgradeLevels[id] || 0; }
+
+function getUpgradeCost(u) {
+  if (u.unlimited) return Math.round(u.baseCost * Math.pow(u.costFactor, lvl(u.id)));
+  const cur = lvl(u.id);
+  return cur < u.levels.length ? u.levels[cur].cost : 0;
+}
 
 function saveState() {
   try {
@@ -528,7 +532,9 @@ function loadState() {
     if (saved.upgradeLevels) {
       UPGRADES.forEach(u => {
         if (saved.upgradeLevels[u.id] !== undefined) {
-          state.upgradeLevels[u.id] = Math.min(saved.upgradeLevels[u.id], u.maxLevel);
+          state.upgradeLevels[u.id] = u.unlimited
+            ? Math.max(0, saved.upgradeLevels[u.id])
+            : Math.min(saved.upgradeLevels[u.id], u.maxLevel);
         }
       });
     }
@@ -763,19 +769,35 @@ function renderUpgrades() {
   grid.innerHTML = '';
   UPGRADES.forEach(u => {
     const cur = lvl(u.id);
-    const isMaxed = cur >= u.maxLevel;
+    const isUnlimited = !!u.unlimited;
+    const isMaxed = !isUnlimited && cur >= u.maxLevel;
     const card = document.createElement('div');
     card.className = 'upgrade-card' + (isMaxed ? ' maxed' : '');
-    const nextCost = !isMaxed ? u.levels[cur].cost : 0;
-    const nextDesc = !isMaxed ? u.levels[cur].desc : u.levels[u.maxLevel - 1].desc;
+
     let dotsHtml = '';
-    if (u.maxLevel > 1) {
-      dotsHtml = '<div class="upgrade-level-dots">' +
-        Array.from({length: u.maxLevel}, (_,i) =>
-          `<div class="level-dot ${i < cur ? 'filled' : ''}"></div>`
-        ).join('') + `<span style="font-family:'Raleway',sans-serif;font-size:9px;color:#5a5040;margin-left:3px">${cur}/${u.maxLevel}</span>` +
-        '</div>';
+    let nextDesc = '';
+    let nextCost = 0;
+
+    if (isUnlimited) {
+      nextCost = getUpgradeCost(u);
+      const charges = cur;
+      const chargeColor = charges === 0 ? '#6a4a4a' : '#c080e0';
+      nextDesc = charges === 0
+        ? 'No charges — streak is <b style="color:#c06060">unprotected</b>. Each purchase adds 1 charge. Each loss on a streak burns 1 charge. Costs compound with each buy.'
+        : `<b style="color:${chargeColor}">${charges} charge${charges !== 1 ? 's' : ''}</b> remaining. Each loss on an active streak consumes one charge. At 0, your streak resets normally.`;
+      dotsHtml = `<div style="font-family:'Cinzel',serif;font-size:10px;color:${chargeColor};margin-top:2px">${charges} charge${charges !== 1 ? 's' : ''}</div>`;
+    } else {
+      nextCost = !isMaxed ? u.levels[cur].cost : 0;
+      nextDesc = !isMaxed ? u.levels[cur].desc : u.levels[u.maxLevel - 1].desc;
+      if (u.maxLevel > 1 && !isUnlimited) {
+        dotsHtml = '<div class="upgrade-level-dots">' +
+          Array.from({length: u.maxLevel}, (_,i) =>
+            `<div class="level-dot ${i < cur ? 'filled' : ''}"></div>`
+          ).join('') + `<span style="font-family:'Raleway',sans-serif;font-size:9px;color:#5a5040;margin-left:3px">${cur}/${u.maxLevel}</span>` +
+          '</div>';
+      }
     }
+
     card.innerHTML = `
       <div style="display:flex;align-items:center;gap:9px">
         <div class="upgrade-icon ${u.iconColor}">${u.iconSvg}</div>
@@ -785,9 +807,9 @@ function renderUpgrades() {
       <div class="upgrade-footer">
         ${isMaxed
           ? `<div class="upgrade-cost"></div><div class="maxed-badge">Max</div>`
-          : `<div class="upgrade-cost">${nextCost.toLocaleString()} cr</div>
+          : `<div class="upgrade-cost">${nextCost.toLocaleString()} cr${isUnlimited && cur > 0 ? '<span style="font-family:Raleway;font-size:8px;color:#5a4060;display:block">×' + u.costFactor.toFixed(2) + ' each time</span>' : ''}</div>
              <button class="buy-btn" ${state.credits < nextCost ? 'disabled' : ''} onclick="buyUpgrade('${u.id}')">
-               ${cur > 0 ? 'Upgrade' : 'Buy'}
+               ${isUnlimited ? '+ Charge' : cur > 0 ? 'Upgrade' : 'Buy'}
              </button>`
         }
       </div>`;
@@ -798,7 +820,7 @@ function renderUpgrades() {
 }
 
 function updateShopBadge() {
-  const available = UPGRADES.filter(u => lvl(u.id) < u.maxLevel).length;
+  const available = UPGRADES.filter(u => u.unlimited || lvl(u.id) < u.maxLevel).length;
   const badge = document.getElementById('shop-badge');
   badge.textContent = available;
   badge.style.display = available > 0 ? '' : 'none';
@@ -806,9 +828,10 @@ function updateShopBadge() {
 
 function buyUpgrade(id) {
   const u = UPGRADES.find(x => x.id === id);
+  if (!u) return;
   const cur = lvl(id);
-  if (!u || cur >= u.maxLevel) return;
-  const cost = u.levels[cur].cost;
+  if (!u.unlimited && cur >= u.maxLevel) return;
+  const cost = getUpgradeCost(u);
   if (state.credits < cost) return;
   state.credits -= cost;
   state.totalUpgradeSpent = (state.totalUpgradeSpent || 0) + cost;
@@ -841,9 +864,11 @@ function renderActivePips() {
   c.innerHTML = '';
   const pip = (cls, txt) => { const d = document.createElement('div'); d.className = 'upgrade-pip ' + cls; d.textContent = txt; c.appendChild(d); };
   if (lvl('auto_spin') > 0 && autoRunning) pip('auto', 'Auto');
-  if (lvl('lucky_streak') > 0 && streakCount > 0) pip('streak', 'Streak x' + streakCount);
+  if (streakCount > 0) pip('streak', 'Streak x' + streakCount);
   if (lvl('win_boost') > 0) pip('multi', `+${[0,15,28,45][lvl('win_boost')]}% wins`);
   if (lvl('safety_net') > 0 && !state.safetyNetUsed) pip('shield', 'Safety Net');
+  const shieldCharges = lvl('streak_shield');
+  if (shieldCharges > 0) pip('shield', `Shield ×${shieldCharges}`);
   if (lvl('ghost_spin') > 0) { const n = 8 - (state.spinCount % 8); if (n <= 3) pip('ghost', 'Free in ' + n); }
   if (lvl('lucky_reel') > 0) pip('reel', 'Lucky Reel ' + lvl('lucky_reel'));
 }
@@ -1144,14 +1169,18 @@ async function spin() {
       state.tripleCounts[results[0]] = (state.tripleCounts[results[0]] || 0) + 1;
     }
     if (state._lowCreditBeforeSpin) state._comebackDone = true;
-    if (lvl('lucky_streak') > 0) streakCount++;
+    streakCount++;
     state.maxStreak = Math.max(state.maxStreak || 0, streakCount);
   } else {
-    const shieldLvl = lvl('streak_shield');
-    const shieldThreshold = shieldLvl >= 2 ? 2 : 3;
-    if (lvl('lucky_streak') > 0) {
-      if (shieldLvl > 0 && streakCount >= shieldThreshold) { }
-      else streakCount = 0;
+    const shieldCharges = lvl('streak_shield');
+    if (shieldCharges > 0 && streakCount >= 1) {
+      // Burn one charge, streak preserved
+      state.upgradeLevels['streak_shield']--;
+      saveState();
+      renderActivePips();
+      renderUpgrades();
+    } else {
+      streakCount = 0;
     }
   }
 
