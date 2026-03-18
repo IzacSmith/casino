@@ -209,7 +209,7 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 <div class="casino-wrapper">
   <div class="casino-header">
     <div class="casino-title">Lucky Reels</div>
-    <div class="casino-subtitle">Est. 2025 &#9670; By Izac Smith</div>
+    <div class="casino-subtitle">Est. 2025 &#9670; Las Vegas Style</div>
   </div>
   <div class="deco-divider"><div class="deco-diamond"></div></div>
 
@@ -254,7 +254,7 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
         <div class="bet-buttons" id="bet-buttons">
           <button class="bet-btn" onclick="setBet(5)">5</button>
           <button class="bet-btn active" onclick="setBet(10)">10</button>
-          <button class="bet-btn" onclick="setBet(25)">25</button>
+          <button class="bet-btn" onclick="setBet(30)">30</button>
           <button class="bet-btn" onclick="setBet(50)">50</button>
         </div>
       </div>
@@ -363,7 +363,7 @@ const audio = {
   rolling: new Audio('rolling.wav'),
   win:     new Audio('win.wav'),
 };
-audio.bg.loop = true; audio.bg.volume = 0.05;
+audio.bg.loop = true; audio.bg.volume = 0.35;
 audio.rolling.loop = true; audio.rolling.volume = 0.6;
 audio.win.volume = 0.9;
 let bgStarted = false;
@@ -392,7 +392,7 @@ const PAYTABLE_ROWS = [
   { keys:['GRAPE','GRAPE','GRAPE'],       mult:'× 7'  },
   { keys:['LEMON','LEMON','LEMON'],       mult:'× 4'  },
   { keys:['CHERRY','CHERRY','CHERRY'],    mult:'× 3'  },
-  { keys:[], label:'Any 2 match',         mult:'× 1.5'  },
+  { keys:[], label:'Any 2 match',         mult:'× 1'  },
 ];
 
 const UPGRADES = [
