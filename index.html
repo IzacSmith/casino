@@ -1109,6 +1109,7 @@ function doubleDown(goDouble) {
 
 function handleBust() {
   state.totalBusts = (state.totalBusts || 0) + 1;
+  document.getElementById('spin-btn').disabled = true;
   if (lvl('safety_net') > 0 && !state.safetyNetUsed) {
     state.safetyNetUsed = true;
     state._safetyTriggered = true;
@@ -1117,6 +1118,7 @@ function handleBust() {
       state.credits = rescue; updateUI(); checkAchievements(); saveState();
       document.getElementById('win-message').textContent = `Safety Net — ${rescue} credits rescued!`;
       document.getElementById('win-message').className = 'win-message small-win';
+      document.getElementById('spin-btn').disabled = false;
     }, 1500);
   } else {
     setTimeout(() => {
@@ -1125,6 +1127,7 @@ function handleBust() {
       updateUI(); checkAchievements(); saveState();
       document.getElementById('win-message').textContent = `${state.settings.startCredits} credits reloaded — good luck!`;
       document.getElementById('win-message').className = 'win-message small-win';
+      document.getElementById('spin-btn').disabled = false;
     }, 2000);
   }
   checkAchievements();
