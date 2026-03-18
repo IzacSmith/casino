@@ -1,0 +1,817 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lucky Reels Casino</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700;900&family=Cinzel:wght@400;600;700&family=Raleway:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --gold: #d4a843;
+    --gold-light: #f0c966;
+    --gold-dark: #8b6914;
+    --crimson: #c0392b;
+    --bg-deep: #0a0a0f;
+  }
+
+  body {
+    background: var(--bg-deep);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Raleway', sans-serif;
+    overflow-x: hidden;
+    padding: 20px;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 60% 40% at 50% 0%, rgba(212,168,67,0.07) 0%, transparent 70%),
+      radial-gradient(ellipse 40% 30% at 10% 90%, rgba(192,57,43,0.05) 0%, transparent 60%),
+      radial-gradient(ellipse 40% 30% at 90% 90%, rgba(192,57,43,0.05) 0%, transparent 60%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .casino-wrapper {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: 620px;
+  }
+
+  .casino-header { text-align: center; margin-bottom: 8px; }
+
+  .casino-title {
+    font-family: 'Cinzel Decorative', serif;
+    font-size: clamp(22px, 5vw, 38px);
+    font-weight: 900;
+    letter-spacing: 0.12em;
+    background: linear-gradient(180deg, #f0c966 0%, #d4a843 40%, #8b6914 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    line-height: 1.1;
+  }
+
+  .casino-subtitle {
+    font-family: 'Cinzel', serif;
+    font-size: 11px;
+    letter-spacing: 0.35em;
+    color: #5a4a1a;
+    text-transform: uppercase;
+    margin-top: 4px;
+  }
+
+  .deco-divider {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 10px 0;
+  }
+  .deco-divider::before, .deco-divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--gold-dark), transparent);
+  }
+  .deco-diamond { width: 8px; height: 8px; background: var(--gold); transform: rotate(45deg); }
+
+  .machine-body {
+    background: linear-gradient(160deg, #1a1a25 0%, #0e0e18 50%, #131320 100%);
+    border: 2px solid #2a2218;
+    border-radius: 24px;
+    padding: 28px 24px 24px;
+    position: relative;
+    box-shadow: 0 0 0 1px #3a3010, 0 0 40px rgba(0,0,0,0.8),
+      inset 0 1px 0 rgba(212,168,67,0.15), inset 0 -1px 0 rgba(0,0,0,0.5);
+  }
+
+  .machine-body::before {
+    content: '';
+    position: absolute;
+    inset: 2px;
+    border-radius: 22px;
+    border: 1px solid rgba(212,168,67,0.08);
+    pointer-events: none;
+  }
+
+  .corner-ornament {
+    position: absolute; width: 20px; height: 20px;
+    border-color: var(--gold-dark); border-style: solid; opacity: 0.45;
+  }
+  .corner-ornament.tl { top: 10px; left: 10px; border-width: 2px 0 0 2px; border-radius: 4px 0 0 0; }
+  .corner-ornament.tr { top: 10px; right: 10px; border-width: 2px 2px 0 0; border-radius: 0 4px 0 0; }
+  .corner-ornament.bl { bottom: 10px; left: 10px; border-width: 0 0 2px 2px; border-radius: 0 0 0 4px; }
+  .corner-ornament.br { bottom: 10px; right: 10px; border-width: 0 2px 2px 0; border-radius: 0 0 4px 0; }
+
+  .stats-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+
+  .stat-box {
+    background: rgba(0,0,0,0.4);
+    border: 1px solid #2a2218;
+    border-radius: 8px;
+    padding: 10px 12px;
+    text-align: center;
+  }
+
+  .stat-label {
+    font-family: 'Cinzel', serif;
+    font-size: 9px;
+    letter-spacing: 0.25em;
+    color: var(--gold-dark);
+    text-transform: uppercase;
+    display: block;
+    margin-bottom: 4px;
+  }
+
+  .stat-value {
+    font-family: 'Cinzel', serif;
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--gold-light);
+    line-height: 1;
+  }
+
+  .stat-value.win-flash { animation: flash-gold 0.4s ease-in-out 4; }
+
+  @keyframes flash-gold {
+    0%, 100% { color: var(--gold-light); }
+    50% { color: #fff; text-shadow: 0 0 12px var(--gold); }
+  }
+
+  .reels-frame {
+    background: #060609;
+    border: 2px solid #252515;
+    border-radius: 12px;
+    padding: 16px;
+    position: relative;
+    margin-bottom: 18px;
+    box-shadow: inset 0 4px 20px rgba(0,0,0,0.8);
+  }
+
+  .reels-inner {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+  }
+
+  .win-line {
+    position: absolute;
+    left: 16px; right: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    height: 100px;
+    border-top: 1px dashed rgba(212,168,67,0.1);
+    border-bottom: 1px dashed rgba(212,168,67,0.1);
+    pointer-events: none;
+    z-index: 2;
+  }
+
+  .reel-container {
+    flex: 1;
+    max-width: 140px;
+    height: 100px;
+    overflow: hidden;
+    border-radius: 8px;
+    border: 1px solid #1e1e10;
+    background: #0a0a10;
+    position: relative;
+    box-shadow: inset 0 0 12px rgba(0,0,0,0.7);
+  }
+
+  .reel-container::before, .reel-container::after {
+    content: '';
+    position: absolute;
+    left: 0; right: 0;
+    height: 28px;
+    z-index: 3;
+    pointer-events: none;
+  }
+  .reel-container::before { top: 0; background: linear-gradient(to bottom, rgba(6,6,9,0.92) 0%, transparent 100%); }
+  .reel-container::after  { bottom: 0; background: linear-gradient(to top, rgba(6,6,9,0.92) 0%, transparent 100%); }
+
+  .reel-track {
+    position: absolute;
+    width: 100%;
+    top: 0;
+    will-change: top;
+  }
+
+  .reel-symbol {
+    height: 100px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    user-select: none;
+  }
+
+  .reel-symbol svg {
+    width: 56px;
+    height: 56px;
+    display: block;
+  }
+
+  .reel-container.winning {
+    border-color: var(--gold);
+    box-shadow: 0 0 16px rgba(212,168,67,0.4), inset 0 0 12px rgba(212,168,67,0.1);
+    animation: reel-win-pulse 0.6s ease-in-out infinite;
+  }
+
+  @keyframes reel-win-pulse {
+    0%, 100% { box-shadow: 0 0 16px rgba(212,168,67,0.4), inset 0 0 12px rgba(212,168,67,0.1); }
+    50%       { box-shadow: 0 0 28px rgba(212,168,67,0.7), inset 0 0 20px rgba(212,168,67,0.2); }
+  }
+
+  .win-message {
+    text-align: center;
+    min-height: 36px;
+    margin-bottom: 16px;
+    font-family: 'Cinzel', serif;
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+  }
+
+  .win-message.big-win   { color: var(--gold-light); }
+  .win-message.small-win { color: #8aaa40; }
+  .win-message.loss      { color: #4a3030; }
+  .win-message.neutral   { color: #3a3020; }
+
+  @keyframes jackpot-glow {
+    0%, 100% { text-shadow: 0 0 10px var(--gold), 0 0 20px var(--gold); }
+    50%       { text-shadow: 0 0 20px var(--gold-light), 0 0 40px var(--gold), 0 0 60px #fff; }
+  }
+  .jackpot-message { animation: jackpot-glow 0.5s ease-in-out infinite; }
+
+  .bet-section { margin-bottom: 16px; }
+
+  .bet-label {
+    font-family: 'Cinzel', serif;
+    font-size: 9px;
+    letter-spacing: 0.25em;
+    color: var(--gold-dark);
+    text-align: center;
+    display: block;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+  }
+
+  .bet-buttons { display: flex; gap: 8px; justify-content: center; }
+
+  .bet-btn {
+    flex: 1;
+    max-width: 90px;
+    padding: 10px 8px;
+    background: rgba(0,0,0,0.3);
+    border: 1px solid #2a2218;
+    border-radius: 8px;
+    color: var(--gold-dark);
+    font-family: 'Cinzel', serif;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.15s;
+    letter-spacing: 0.05em;
+  }
+
+  .bet-btn:hover  { background: rgba(212,168,67,0.1); border-color: var(--gold-dark); color: var(--gold-light); }
+  .bet-btn.active { background: rgba(212,168,67,0.15); border-color: var(--gold); color: var(--gold-light); box-shadow: 0 0 8px rgba(212,168,67,0.2); }
+
+  .spin-button {
+    width: 100%;
+    padding: 16px;
+    background: linear-gradient(160deg, #a01818 0%, var(--crimson) 50%, #8a1010 100%);
+    border: none;
+    border-radius: 12px;
+    color: #fff;
+    font-family: 'Cinzel Decorative', serif;
+    font-size: 18px;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.15s;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 4px 20px rgba(192,57,43,0.3), inset 0 1px 0 rgba(255,255,255,0.1), inset 0 -2px 0 rgba(0,0,0,0.3);
+  }
+
+  .spin-button::after {
+    content: '';
+    position: absolute;
+    top: 0; left: -100%;
+    width: 60%; height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.12), transparent);
+    transform: skewX(-20deg);
+    transition: left 0.4s;
+  }
+
+  .spin-button:hover::after { left: 150%; }
+  .spin-button:hover { transform: translateY(-1px); box-shadow: 0 6px 24px rgba(192,57,43,0.45); }
+  .spin-button:active { transform: translateY(1px); box-shadow: 0 2px 12px rgba(192,57,43,0.3); }
+
+  .spin-button:disabled {
+    background: linear-gradient(160deg, #2a1a1a 0%, #1e1010 100%);
+    color: #4a3030; cursor: not-allowed; box-shadow: none; transform: none;
+  }
+  .spin-button:disabled::after { display: none; }
+
+  .paytable-toggle { text-align: center; margin-top: 20px; }
+
+  .paytable-toggle-btn {
+    background: none;
+    border: none;
+    color: var(--gold-dark);
+    font-family: 'Cinzel', serif;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    cursor: pointer;
+    padding: 6px 16px;
+    transition: color 0.2s;
+  }
+  .paytable-toggle-btn:hover { color: var(--gold); }
+
+  .paytable {
+    margin-top: 14px;
+    background: rgba(0,0,0,0.3);
+    border: 1px solid #1e1808;
+    border-radius: 10px;
+    padding: 14px;
+    display: none;
+  }
+  .paytable.visible { display: block; }
+
+  .paytable-title {
+    font-family: 'Cinzel', serif;
+    font-size: 10px;
+    letter-spacing: 0.25em;
+    color: var(--gold-dark);
+    text-align: center;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+
+  .pay-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 5px 0;
+    border-bottom: 1px solid #1a1408;
+  }
+  .pay-row:last-child { border-bottom: none; }
+
+  .pay-symbols { display: flex; align-items: center; gap: 4px; }
+  .pay-symbols svg { width: 20px; height: 20px; }
+  .pay-symbols .pay-text {
+    font-family: 'Raleway', sans-serif;
+    font-size: 12px;
+    color: #6a5a3a;
+  }
+
+  .pay-mult {
+    color: var(--gold);
+    font-weight: 600;
+    font-family: 'Cinzel', serif;
+    font-size: 12px;
+  }
+
+  .coin-particle {
+    position: fixed;
+    pointer-events: none;
+    z-index: 100;
+    font-family: 'Cinzel', serif;
+    font-weight: 700;
+    color: #d4a843;
+    font-size: 16px;
+    animation: coin-fall linear forwards;
+  }
+  @keyframes coin-fall {
+    0%   { transform: translateY(-20px) rotate(0deg); opacity: 1; }
+    100% { transform: translateY(100vh) rotate(600deg); opacity: 0; }
+  }
+</style>
+</head>
+<body>
+
+<div class="casino-wrapper">
+  <div class="casino-header">
+    <div class="casino-title">Lucky Reels</div>
+    <div class="casino-subtitle">Est. 2025 &nbsp;&#9670;&nbsp; Las Vegas Style</div>
+  </div>
+
+  <div class="deco-divider"><div class="deco-diamond"></div></div>
+
+  <div class="machine-body">
+    <div class="corner-ornament tl"></div>
+    <div class="corner-ornament tr"></div>
+    <div class="corner-ornament bl"></div>
+    <div class="corner-ornament br"></div>
+
+    <div class="stats-row">
+      <div class="stat-box">
+        <span class="stat-label">Credits</span>
+        <span class="stat-value" id="credits">200</span>
+      </div>
+      <div class="stat-box">
+        <span class="stat-label">Bet</span>
+        <span class="stat-value" id="bet-display">10</span>
+      </div>
+      <div class="stat-box">
+        <span class="stat-label">Won</span>
+        <span class="stat-value" id="won-display" style="color:#6a8a30;">0</span>
+      </div>
+    </div>
+
+    <div class="reels-frame">
+      <div class="win-line"></div>
+      <div class="reels-inner">
+        <div class="reel-container" id="reel-0"><div class="reel-track" id="track-0"></div></div>
+        <div class="reel-container" id="reel-1"><div class="reel-track" id="track-1"></div></div>
+        <div class="reel-container" id="reel-2"><div class="reel-track" id="track-2"></div></div>
+      </div>
+    </div>
+
+    <div class="win-message neutral" id="win-message">Place your bet and spin the reels</div>
+
+    <div class="bet-section">
+      <span class="bet-label">Select Bet</span>
+      <div class="bet-buttons">
+        <button class="bet-btn" onclick="setBet(5)">5</button>
+        <button class="bet-btn active" onclick="setBet(10)">10</button>
+        <button class="bet-btn" onclick="setBet(25)">25</button>
+        <button class="bet-btn" onclick="setBet(50)">50</button>
+      </div>
+    </div>
+
+    <button class="spin-button" id="spin-btn" onclick="spin()">SPIN</button>
+
+    <div class="paytable-toggle">
+      <button class="paytable-toggle-btn" onclick="togglePaytable()">&#9660; Pay Table &#9660;</button>
+      <div class="paytable" id="paytable">
+        <div class="paytable-title">Winning Combinations</div>
+        <div id="paytable-rows"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── Audio ───────────────────────────────────────────────────────────────────
+const audio = {
+  bg:      new Audio('background.mp3'),
+  rolling: new Audio('rolling.wav'),
+  win:     new Audio('win.wav'),
+};
+
+audio.bg.loop = true;
+audio.bg.volume = 0.35;
+audio.rolling.loop = true;
+audio.rolling.volume = 0.6;
+audio.win.volume = 0.9;
+
+let bgStarted = false;
+
+function startBg() {
+  if (!bgStarted) {
+    audio.bg.play().catch(() => {});
+    bgStarted = true;
+  }
+}
+
+// Kick off background on first user interaction
+document.addEventListener('click', startBg, { once: true });
+
+const SVG = {
+  SEVEN: `<svg viewBox="0 0 54 54" xmlns="http://www.w3.org/2000/svg">
+    <text x="27" y="38" text-anchor="middle"
+      font-family="'Cinzel Decorative',serif" font-size="36" font-weight="900"
+      fill="#e03030">7</text>
+  </svg>`,
+
+  BAR: `<svg viewBox="0 0 54 54" xmlns="http://www.w3.org/2000/svg">
+    <rect x="7" y="14" width="40" height="12" rx="3" fill="#d4a843"/>
+    <rect x="11" y="28" width="32" height="9" rx="2.5" fill="#c09030"/>
+    <rect x="15" y="39" width="24" height="7" rx="2" fill="#a07820"/>
+    <text x="27" y="23" text-anchor="middle" font-family="Arial,sans-serif"
+      font-size="7.5" font-weight="800" fill="#0a0a10" letter-spacing="1.5">BAR</text>
+  </svg>`,
+
+  BELL: `<svg viewBox="0 0 54 54" xmlns="http://www.w3.org/2000/svg">
+    <path d="M27 7 C17 7 12 16 12 26 L12 37 L42 37 L42 26 C42 16 37 7 27 7Z" fill="#d4a843"/>
+    <rect x="9" y="35" width="36" height="5" rx="2.5" fill="#a07820"/>
+    <circle cx="27" cy="45" r="4.5" fill="#b88a20"/>
+    <ellipse cx="21" cy="19" rx="4" ry="3" fill="rgba(255,255,255,0.2)"/>
+  </svg>`,
+
+  CHERRY: `<svg viewBox="0 0 54 54" xmlns="http://www.w3.org/2000/svg">
+    <path d="M27 16 Q31 7 38 9 Q44 11 40 18" stroke="#3a7a20" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+    <path d="M27 16 Q23 7 16 9 Q10 11 14 18" stroke="#3a7a20" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+    <circle cx="39" cy="28" r="10" fill="#c0392b"/>
+    <circle cx="16" cy="28" r="10" fill="#c0392b"/>
+    <circle cx="35" cy="23" r="3.5" fill="rgba(255,255,255,0.28)"/>
+    <circle cx="12" cy="23" r="3.5" fill="rgba(255,255,255,0.28)"/>
+  </svg>`,
+
+  LEMON: `<svg viewBox="0 0 54 54" xmlns="http://www.w3.org/2000/svg">
+    <ellipse cx="27" cy="30" rx="17" ry="13" fill="#e8c020"/>
+    <ellipse cx="10" cy="30" rx="5" ry="8" fill="#caa010"/>
+    <ellipse cx="44" cy="30" rx="5" ry="8" fill="#caa010"/>
+    <ellipse cx="27" cy="15" rx="4" ry="6" fill="#caa010"/>
+    <circle cx="21" cy="25" r="4" fill="rgba(255,255,255,0.22)"/>
+  </svg>`,
+
+  GRAPE: `<svg viewBox="0 0 54 54" xmlns="http://www.w3.org/2000/svg">
+    <line x1="27" y1="8" x2="27" y2="16" stroke="#5a3090" stroke-width="2.5" stroke-linecap="round"/>
+    <path d="M27 13 Q35 10 37 15" stroke="#4a2070" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+    <circle cx="20" cy="22" r="8" fill="#7040c0"/>
+    <circle cx="34" cy="22" r="8" fill="#7040c0"/>
+    <circle cx="27" cy="33" r="8" fill="#7040c0"/>
+    <circle cx="27" cy="44" r="7" fill="#5c30a8"/>
+    <circle cx="17" cy="18" r="3" fill="rgba(200,160,255,0.3)"/>
+    <circle cx="31" cy="18" r="3" fill="rgba(200,160,255,0.3)"/>
+    <circle cx="24" cy="29" r="3" fill="rgba(200,160,255,0.3)"/>
+    <circle cx="24" cy="40" r="2.5" fill="rgba(200,160,255,0.25)"/>
+  </svg>`,
+
+  DIAMOND: `<svg viewBox="0 0 54 54" xmlns="http://www.w3.org/2000/svg">
+    <polygon points="27,5 47,23 27,49 7,23" fill="#50b8e8"/>
+    <polygon points="27,5 47,23 27,23" fill="#88d8ff"/>
+    <polygon points="7,23 27,23 27,49" fill="#309ab0"/>
+    <polygon points="17,23 27,5 37,23" fill="rgba(255,255,255,0.35)"/>
+  </svg>`,
+};
+
+const SYMBOL_KEYS  = ['SEVEN','DIAMOND','BELL','GRAPE','LEMON','CHERRY','CHERRY','LEMON','LEMON','GRAPE','GRAPE','BELL'];
+const SYMBOL_NAMES = { SEVEN:'Seven', DIAMOND:'Diamond', BELL:'Bell', GRAPE:'Grape', LEMON:'Lemon', CHERRY:'Cherry' };
+const SYMBOL_MULT  = { SEVEN:100, DIAMOND:50, BELL:20, GRAPE:10, LEMON:5, CHERRY:4 };
+const PAYTABLE_ROWS = [
+  { keys:['SEVEN','SEVEN','SEVEN'],   mult:'× 100' },
+  { keys:['DIAMOND','DIAMOND','DIAMOND'], mult:'× 50' },
+  { keys:['BELL','BELL','BELL'],      mult:'× 20' },
+  { keys:['GRAPE','GRAPE','GRAPE'],   mult:'× 10' },
+  { keys:['LEMON','LEMON','LEMON'],   mult:'× 5'  },
+  { keys:['CHERRY','CHERRY','CHERRY'],mult:'× 4'  },
+  { keys:[], label:'Any 3 match',     mult:'× 3'  },
+  { keys:[], label:'Any 2 match',     mult:'× 1'  },
+];
+
+let credits = 200, bet = 10, totalWon = 0, spinning = false;
+const strips = [];
+const SYMBOL_H = 100;
+
+function makeCellEl(key) {
+  const div = document.createElement('div');
+  div.className = 'reel-symbol';
+  div.innerHTML = SVG[key];
+  return div;
+}
+
+function buildReel(trackEl) {
+  const strip = [];
+  for (let i = 0; i < 30; i++) strip.push(SYMBOL_KEYS[Math.floor(Math.random() * SYMBOL_KEYS.length)]);
+  trackEl.innerHTML = '';
+  strip.forEach(k => trackEl.appendChild(makeCellEl(k)));
+  return strip;
+}
+
+function initReels() {
+  for (let i = 0; i < 3; i++) {
+    const track = document.getElementById('track-' + i);
+    strips[i] = buildReel(track);
+    track.style.transition = 'none';
+    track.style.top = (-2 * SYMBOL_H) + 'px';
+  }
+  buildPaytable();
+}
+
+function buildPaytable() {
+  const container = document.getElementById('paytable-rows');
+  PAYTABLE_ROWS.forEach(r => {
+    const row = document.createElement('div');
+    row.className = 'pay-row';
+    const syms = document.createElement('div');
+    syms.className = 'pay-symbols';
+    if (r.keys && r.keys.length) {
+      r.keys.forEach(k => {
+        const d = document.createElement('div');
+        d.innerHTML = SVG[k];
+        d.style.cssText = 'width:20px;height:20px;display:flex;align-items:center;justify-content:center;';
+        d.querySelector('svg').setAttribute('width','20');
+        d.querySelector('svg').setAttribute('height','20');
+        syms.appendChild(d);
+      });
+    } else {
+      const s = document.createElement('span');
+      s.className = 'pay-text';
+      s.textContent = r.label;
+      syms.appendChild(s);
+    }
+    const mult = document.createElement('div');
+    mult.className = 'pay-mult';
+    mult.textContent = r.mult;
+    row.appendChild(syms);
+    row.appendChild(mult);
+    container.appendChild(row);
+  });
+}
+
+function setBet(amount) {
+  bet = amount;
+  document.getElementById('bet-display').textContent = amount;
+  document.querySelectorAll('.bet-btn').forEach(b => b.classList.toggle('active', parseInt(b.textContent) === amount));
+}
+
+function togglePaytable() {
+  document.getElementById('paytable').classList.toggle('visible');
+}
+
+function updateUI() {
+  document.getElementById('credits').textContent = credits;
+  document.getElementById('won-display').textContent = totalWon;
+}
+
+function spinReel(reelIdx, stopKey, delay) {
+  return new Promise(resolve => {
+    const track = document.getElementById('track-' + reelIdx);
+    const strip = strips[reelIdx];
+
+    let stopIdx = -1;
+    for (let i = strip.length - 5; i >= 5; i--) {
+      if (strip[i] === stopKey) { stopIdx = i; break; }
+    }
+    if (stopIdx === -1) {
+      strip[strip.length - 6] = stopKey;
+      stopIdx = strip.length - 6;
+      const el = track.children[stopIdx];
+      if (el) el.innerHTML = SVG[stopKey];
+    }
+
+    const durationMs = 820 + delay * 290 + Math.random() * 180;
+    track.style.transition = 'none';
+    track.style.top = '0px';
+
+    requestAnimationFrame(() => {
+      setTimeout(() => {
+        track.style.transition = `top ${durationMs}ms cubic-bezier(0.22, 1, 0.36, 1)`;
+        track.style.top = (-stopIdx * SYMBOL_H) + 'px';
+        setTimeout(resolve, durationMs + 80);
+      }, delay * 140);
+    });
+  });
+}
+
+function pickResults() {
+  const r = () => SYMBOL_KEYS[Math.floor(Math.random() * SYMBOL_KEYS.length)];
+  const roll = Math.random();
+  if (roll < 0.03) return ['SEVEN','SEVEN','SEVEN'];
+  if (roll < 0.07) return ['DIAMOND','DIAMOND','DIAMOND'];
+  if (roll < 0.13) return ['BELL','BELL','BELL'];
+  if (roll < 0.21) return ['GRAPE','GRAPE','GRAPE'];
+  if (roll < 0.29) { const s = ['LEMON','CHERRY'][Math.floor(Math.random()*2)]; return [s,s,s]; }
+  if (roll < 0.44) { const s = r(); const a = r(); return Math.random()<0.5 ? [s,s,a] : [a,s,s]; }
+  return [r(), r(), r()];
+}
+
+function calcWin(syms, betAmt) {
+  const [a, b, c] = syms;
+  let win = 0, msg = '', msgClass = 'loss';
+
+  if (a === b && b === c) {
+    const mult = SYMBOL_MULT[a] || 3;
+    win = betAmt * mult;
+    if (mult >= 50) {
+      msg = `JACKPOT  ${SYMBOL_NAMES[a]}  +${win}`;
+      msgClass = 'big-win jackpot-message';
+    } else {
+      msg = `${SYMBOL_NAMES[a]}  ${SYMBOL_NAMES[a]}  ${SYMBOL_NAMES[a]}  —  +${win} credits`;
+      msgClass = 'big-win';
+    }
+  } else if (a === b || b === c || a === c) {
+    win = betAmt;
+    msg = `Two of a kind  —  +${win} credits`;
+    msgClass = 'small-win';
+  } else {
+    msg = 'No match — better luck next time';
+    msgClass = 'loss';
+  }
+  return { win, msg, msgClass };
+}
+
+function highlightWinningReels(syms) {
+  const [a, b, c] = syms;
+  [0,1,2].forEach(i => document.getElementById('reel-'+i).classList.remove('winning'));
+  if (a === b && b === c) { [0,1,2].forEach(i => document.getElementById('reel-'+i).classList.add('winning')); }
+  else if (a === b) { [0,1].forEach(i => document.getElementById('reel-'+i).classList.add('winning')); }
+  else if (b === c) { [1,2].forEach(i => document.getElementById('reel-'+i).classList.add('winning')); }
+  else if (a === c) { [0,2].forEach(i => document.getElementById('reel-'+i).classList.add('winning')); }
+}
+
+function spawnCoins(count) {
+  for (let i = 0; i < count; i++) {
+    setTimeout(() => {
+      const coin = document.createElement('div');
+      coin.className = 'coin-particle';
+      coin.style.left = (15 + Math.random() * 70) + 'vw';
+      coin.style.top = '-24px';
+      coin.style.animationDuration = (1.4 + Math.random() * 1.4) + 's';
+      coin.textContent = '$';
+      document.body.appendChild(coin);
+      setTimeout(() => coin.remove(), 3200);
+    }, i * 65);
+  }
+}
+
+async function spin() {
+  if (spinning) return;
+  if (credits < bet) {
+    document.getElementById('win-message').textContent = 'Not enough credits!';
+    document.getElementById('win-message').className = 'win-message loss';
+    return;
+  }
+
+  spinning = true;
+  credits -= bet;
+  updateUI();
+
+  [0,1,2].forEach(i => document.getElementById('reel-'+i).classList.remove('winning'));
+  document.getElementById('win-message').textContent = '— — —';
+  document.getElementById('win-message').className = 'win-message neutral';
+  document.getElementById('spin-btn').disabled = true;
+
+  const results = pickResults();
+  for (let i = 0; i < 3; i++) {
+    const track = document.getElementById('track-' + i);
+    strips[i] = buildReel(track);
+  }
+
+  audio.rolling.currentTime = 0;
+  audio.rolling.play().catch(() => {});
+
+  await Promise.all([
+    spinReel(0, results[0], 0),
+    spinReel(1, results[1], 1),
+    spinReel(2, results[2], 2),
+  ]);
+
+  audio.rolling.pause();
+  audio.rolling.currentTime = 0;
+
+  const { win, msg, msgClass } = calcWin(results, bet);
+
+  if (win > 0) {
+    audio.win.currentTime = 0;
+    audio.win.play().catch(() => {});
+  }
+  credits += win;
+  if (win > 0) totalWon += win;
+  updateUI();
+
+  if (win > 0) highlightWinningReels(results);
+
+  document.getElementById('win-message').textContent = msg;
+  document.getElementById('win-message').className = 'win-message ' + msgClass;
+
+  if (win >= bet * 20) spawnCoins(28);
+  else if (win >= bet * 5) spawnCoins(10);
+  else if (win > 0) spawnCoins(4);
+
+  if (win > 0) {
+    const wonEl = document.getElementById('won-display');
+    wonEl.classList.remove('win-flash');
+    void wonEl.offsetWidth;
+    wonEl.classList.add('win-flash');
+  }
+
+  if (credits <= 0) {
+    setTimeout(() => {
+      credits = 200; totalWon = 0;
+      updateUI();
+      document.getElementById('win-message').textContent = 'Reloaded 200 credits — Good luck!';
+      document.getElementById('win-message').className = 'win-message small-win';
+    }, 2000);
+  }
+
+  spinning = false;
+  document.getElementById('spin-btn').disabled = false;
+}
+
+initReels();
+updateUI();
+</script>
+</body>
+</html>
