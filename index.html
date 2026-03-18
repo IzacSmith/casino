@@ -1145,8 +1145,9 @@ function handleBust() {
 async function spin() {
   if (spinning) return;
   if (state.credits < bet) {
-    document.getElementById('win-message').textContent = 'Not enough credits!';
+    document.getElementById('win-message').textContent = 'Not enough credits — reloading...';
     document.getElementById('win-message').className = 'win-message loss';
+    handleBust();
     return;
   }
 
