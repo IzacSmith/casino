@@ -173,19 +173,50 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 
 .coin-particle{position:fixed;pointer-events:none;z-index:100;font-family:'Cinzel',serif;font-weight:700;color:#d4a843;font-size:16px;animation:coin-fall linear forwards}
 @keyframes coin-fall{0%{transform:translateY(-20px) rotate(0deg);opacity:1}100%{transform:translateY(100vh) rotate(600deg);opacity:0}}
+
+.ach-toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);z-index:200;background:linear-gradient(135deg,#1a1a10 0%,#0e0e08 100%);border:1px solid var(--gold-dark);border-radius:12px;padding:12px 18px;display:flex;align-items:center;gap:12px;min-width:260px;max-width:340px;box-shadow:0 8px 32px rgba(0,0,0,.8),0 0 0 1px rgba(212,168,67,.1);transition:transform .4s cubic-bezier(.34,1.56,.64,1),opacity .4s;opacity:0;pointer-events:none}
+.ach-toast.show{transform:translateX(-50%) translateY(0);opacity:1}
+.ach-toast-icon{width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:18px}
+.ach-toast-body{}
+.ach-toast-label{font-family:'Cinzel',serif;font-size:8px;letter-spacing:.3em;color:var(--gold-dark);text-transform:uppercase;margin-bottom:2px}
+.ach-toast-name{font-family:'Cinzel',serif;font-size:13px;font-weight:700;color:var(--gold-light);letter-spacing:.05em}
+.ach-toast-desc{font-family:'Raleway',sans-serif;font-size:10px;color:#6a5a3a;margin-top:1px}
+
+.ach-header{font-family:'Cinzel',serif;font-size:9px;letter-spacing:.3em;color:var(--gold-dark);text-transform:uppercase;text-align:center;margin-bottom:16px;padding-bottom:10px;border-bottom:1px solid #2a2010}
+.ach-progress-bar-wrap{background:rgba(0,0,0,.4);border-radius:6px;height:6px;margin:6px 0 14px;overflow:hidden}
+.ach-progress-bar{height:100%;background:linear-gradient(90deg,var(--gold-dark),var(--gold));border-radius:6px;transition:width .5s}
+.ach-filter-row{display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap}
+.ach-filter-btn{padding:4px 10px;border-radius:20px;border:1px solid #2a2218;background:rgba(0,0,0,.3);color:#5a4a2a;font-family:'Cinzel',serif;font-size:8px;font-weight:700;letter-spacing:.1em;cursor:pointer;text-transform:uppercase;transition:all .15s}
+.ach-filter-btn.active{border-color:var(--gold-dark);color:var(--gold);background:rgba(212,168,67,.1)}
+.ach-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.ach-card{background:rgba(0,0,0,.35);border:1px solid #1e1808;border-radius:10px;padding:11px 10px;display:flex;gap:9px;align-items:flex-start;transition:border-color .2s}
+.ach-card.unlocked{border-color:#3a3010;background:rgba(20,18,4,.5)}
+.ach-card.locked{opacity:.45}
+.ach-card-icon{width:32px;height:32px;border-radius:7px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:16px;background:rgba(40,36,10,.6)}
+.ach-card.unlocked .ach-card-icon{background:rgba(80,60,5,.5)}
+.ach-card-body{flex:1;min-width:0}
+.ach-card-name{font-family:'Cinzel',serif;font-size:10px;font-weight:700;color:#4a3a18;letter-spacing:.04em;margin-bottom:2px;line-height:1.2}
+.ach-card.unlocked .ach-card-name{color:var(--gold-light)}
+.ach-card-desc{font-family:'Raleway',sans-serif;font-size:9px;color:#3a3020;line-height:1.4}
+.ach-card.unlocked .ach-card-desc{color:#6a5a30}
+.ach-card-cat{font-family:'Cinzel',serif;font-size:7px;letter-spacing:.15em;color:#3a2a10;text-transform:uppercase;margin-top:3px}
+.ach-card.unlocked .ach-card-cat{color:#7a6020}
+.ach-prog-mini{font-family:'Cinzel',serif;font-size:9px;color:#5a4020;margin-top:2px}
+.ach-card.unlocked .ach-prog-mini{color:#8a7030}
 </style>
 </head>
 <body>
 <div class="casino-wrapper">
   <div class="casino-header">
     <div class="casino-title">Lucky Reels</div>
-    <div class="casino-subtitle">Est. 2055 &#9670; By Izac Smith</div>
+    <div class="casino-subtitle">Est. 2025 &#9670; Las Vegas Style</div>
   </div>
   <div class="deco-divider"><div class="deco-diamond"></div></div>
 
   <div class="tab-nav">
     <button class="tab-btn active" onclick="showTab('play',this)">Play</button>
     <button class="tab-btn" onclick="showTab('upgrades',this)">Shop <span class="tab-badge" id="shop-badge"></span></button>
+    <button class="tab-btn" onclick="showTab('achievements',this)">Awards <span class="tab-badge" id="ach-badge"></span></button>
     <button class="tab-btn" onclick="showTab('settings',this)">Settings</button>
   </div>
 
@@ -193,6 +224,7 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
     <div class="corner-ornament bl"></div>
     <div class="corner-ornament br"></div>
 
+    <!-- PLAY -->
     <div class="page active" id="page-play">
       <div class="stats-row">
         <div class="stat-box"><span class="stat-label">Credits</span><span class="stat-value" id="credits">200</span></div>
@@ -245,11 +277,32 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
       </div>
     </div>
 
+    <!-- UPGRADES -->
     <div class="page" id="page-upgrades">
       <div class="upgrades-header">Shop<span class="credits-reminder" id="shop-credits">200 credits</span></div>
       <div class="upgrades-grid" id="upgrades-grid"></div>
     </div>
 
+    <!-- ACHIEVEMENTS -->
+    <div class="page" id="page-achievements">
+      <div class="ach-header">
+        Achievements
+        <span class="credits-reminder" id="ach-count-display">0 / 50</span>
+      </div>
+      <div class="ach-progress-bar-wrap"><div class="ach-progress-bar" id="ach-progress-bar" style="width:0%"></div></div>
+      <div class="ach-filter-row">
+        <button class="ach-filter-btn active" onclick="filterAch('all',this)">All</button>
+        <button class="ach-filter-btn" onclick="filterAch('unlocked',this)">Unlocked</button>
+        <button class="ach-filter-btn" onclick="filterAch('locked',this)">Locked</button>
+        <button class="ach-filter-btn" onclick="filterAch('Spins',this)">Spins</button>
+        <button class="ach-filter-btn" onclick="filterAch('Wins',this)">Wins</button>
+        <button class="ach-filter-btn" onclick="filterAch('Credits',this)">Credits</button>
+        <button class="ach-filter-btn" onclick="filterAch('Symbols',this)">Symbols</button>
+      </div>
+      <div class="ach-grid" id="ach-grid"></div>
+    </div>
+
+    <!-- SETTINGS -->
     <div class="page" id="page-settings">
       <div class="settings-section">
         <div class="settings-title">Bust Credits</div>
@@ -296,6 +349,14 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
   </div>
 </div>
 
+<div class="ach-toast" id="ach-toast">
+  <div class="ach-toast-icon" id="ach-toast-icon">★</div>
+  <div class="ach-toast-body">
+    <div class="ach-toast-label">Achievement Unlocked</div>
+    <div class="ach-toast-name" id="ach-toast-name"></div>
+    <div class="ach-toast-desc" id="ach-toast-desc"></div>
+  </div>
+</div>
 <script>
 const audio = {
   bg:      new Audio('background.mp3'),
@@ -417,6 +478,15 @@ const DEFAULT_STATE = {
   upgradeLevels: Object.fromEntries(UPGRADES.map(u => [u.id, 0])),
   safetyNetUsed: false,
   spinCount: 0,
+  totalWins: 0,
+  maxStreak: 0,
+  totalUpgradeSpent: 0,
+  doubleDownWins: 0,
+  ghostSpinsUsed: 0,
+  tripleCounts: { SEVEN:0, DIAMOND:0, BELL:0, GRAPE:0, LEMON:0, CHERRY:0 },
+  totalBusts: 0,
+  lowestCredits: 9999,
+  achievements: [],
   settings: { startCredits: 200, muteBg: false, muteSfx: false },
 };
 
@@ -445,6 +515,15 @@ function loadState() {
     state.totalWon = saved.totalWon ?? 0;
     state.safetyNetUsed = saved.safetyNetUsed ?? false;
     state.spinCount     = saved.spinCount     ?? 0;
+    state.totalWins     = saved.totalWins     ?? 0;
+    state.maxStreak     = saved.maxStreak     ?? 0;
+    state.totalUpgradeSpent = saved.totalUpgradeSpent ?? 0;
+    state.doubleDownWins    = saved.doubleDownWins    ?? 0;
+    state.ghostSpinsUsed    = saved.ghostSpinsUsed    ?? 0;
+    state.totalBusts        = saved.totalBusts        ?? 0;
+    state.lowestCredits     = saved.lowestCredits     ?? 9999;
+    state.achievements      = saved.achievements      ?? [];
+    if (saved.tripleCounts) Object.assign(state.tripleCounts, saved.tripleCounts);
     if (saved.settings) Object.assign(state.settings, saved.settings);
     if (saved.upgradeLevels) {
       UPGRADES.forEach(u => {
@@ -456,6 +535,156 @@ function loadState() {
   } catch(e) {}
 }
 
+const ACHIEVEMENTS = [
+  { id:'first_spin',    cat:'Spins',   icon:'S', name:'First Pull',         desc:'Spin the reels for the first time.',             check: s => s.spinCount >= 1 },
+  { id:'spin_10',       cat:'Spins',   icon:'S', name:'Getting Started',    desc:'Spin 10 times.',                                 check: s => s.spinCount >= 10 },
+  { id:'spin_50',       cat:'Spins',   icon:'S', name:'Regular',            desc:'Spin 50 times.',                                 check: s => s.spinCount >= 50 },
+  { id:'spin_100',      cat:'Spins',   icon:'S', name:'Dedicated',          desc:'Spin 100 times.',                                check: s => s.spinCount >= 100, progress: s => `${s.spinCount}/100` },
+  { id:'spin_250',      cat:'Spins',   icon:'S', name:'Committed',          desc:'Spin 250 times.',                                check: s => s.spinCount >= 250, progress: s => `${s.spinCount}/250` },
+  { id:'spin_500',      cat:'Spins',   icon:'S', name:'Obsessed',           desc:'Spin 500 times.',                                check: s => s.spinCount >= 500, progress: s => `${s.spinCount}/500` },
+  { id:'spin_1000',     cat:'Spins',   icon:'S', name:'Machine Whisperer',  desc:'Spin 1,000 times.',                              check: s => s.spinCount >= 1000, progress: s => `${s.spinCount}/1000` },
+  { id:'first_win',     cat:'Wins',    icon:'W', name:'First Blood',        desc:'Win on any spin.',                               check: s => s.totalWins >= 1 },
+  { id:'wins_10',       cat:'Wins',    icon:'W', name:'Lucky',              desc:'Win 10 times.',                                  check: s => s.totalWins >= 10 },
+  { id:'wins_25',       cat:'Wins',    icon:'W', name:'Sharp Eye',          desc:'Win 25 times.',                                  check: s => s.totalWins >= 25, progress: s => `${s.totalWins}/25` },
+  { id:'wins_50',       cat:'Wins',    icon:'W', name:'Consistent',         desc:'Win 50 times.',                                  check: s => s.totalWins >= 50, progress: s => `${s.totalWins}/50` },
+  { id:'wins_100',      cat:'Wins',    icon:'W', name:'Winner',             desc:'Win 100 times.',                                 check: s => s.totalWins >= 100, progress: s => `${s.totalWins}/100` },
+  { id:'wins_250',      cat:'Wins',    icon:'W', name:'Champion',           desc:'Win 250 times.',                                 check: s => s.totalWins >= 250, progress: s => `${s.totalWins}/250` },
+  { id:'streak_3',      cat:'Wins',    icon:'W', name:'Hot Streak',         desc:'Win 3 spins in a row.',                          check: s => s.maxStreak >= 3 },
+  { id:'streak_5',      cat:'Wins',    icon:'W', name:'On Fire',            desc:'Win 5 spins in a row.',                          check: s => s.maxStreak >= 5 },
+  { id:'streak_10',     cat:'Wins',    icon:'W', name:'Unstoppable',        desc:'Win 10 spins in a row.',                         check: s => s.maxStreak >= 10, progress: s => `Best: ${s.maxStreak}/10` },
+  { id:'streak_20',     cat:'Wins',    icon:'W', name:'Legendary Run',      desc:'Win 20 spins in a row.',                         check: s => s.maxStreak >= 20, progress: s => `Best: ${s.maxStreak}/20` },
+  { id:'streak_30',     cat:'Wins',    icon:'W', name:'God Mode',           desc:'Win 30 spins in a row.',                         check: s => s.maxStreak >= 30, progress: s => `Best: ${s.maxStreak}/30` },
+  { id:'cr_500',        cat:'Credits', icon:'C', name:'Pocket Change',      desc:'Hold 500 credits at once.',                      check: s => s.credits >= 500 },
+  { id:'cr_1000',       cat:'Credits', icon:'C', name:'Comfortable',        desc:'Hold 1,000 credits at once.',                    check: s => s.credits >= 1000 },
+  { id:'cr_2500',       cat:'Credits', icon:'C', name:'Well Off',           desc:'Hold 2,500 credits at once.',                    check: s => s.credits >= 2500 },
+  { id:'cr_5000',       cat:'Credits', icon:'C', name:'Rich',               desc:'Hold 5,000 credits at once.',                    check: s => s.credits >= 5000 },
+  { id:'cr_10000',      cat:'Credits', icon:'C', name:'Wealthy',            desc:'Hold 10,000 credits at once.',                   check: s => s.credits >= 10000 },
+  { id:'cr_50000',      cat:'Credits', icon:'C', name:'Millionaire',        desc:'Hold 50,000 credits at once.',                   check: s => s.credits >= 50000 },
+  { id:'won_100',       cat:'Credits', icon:'C', name:'First Hundred',      desc:'Win 100 total credits.',                         check: s => s.totalWon >= 100, progress: s => `${s.totalWon}/100` },
+  { id:'won_1000',      cat:'Credits', icon:'C', name:'Big Earner',         desc:'Win 1,000 total credits.',                       check: s => s.totalWon >= 1000, progress: s => `${s.totalWon}/1000` },
+  { id:'won_5000',      cat:'Credits', icon:'C', name:'High Earner',        desc:'Win 5,000 total credits.',                       check: s => s.totalWon >= 5000, progress: s => `${s.totalWon}/5000` },
+  { id:'won_20000',     cat:'Credits', icon:'C', name:'Fortune',            desc:'Win 20,000 total credits.',                      check: s => s.totalWon >= 20000, progress: s => `${s.totalWon}/20000` },
+  { id:'won_100000',    cat:'Credits', icon:'C', name:'Legend',             desc:'Win 100,000 total credits.',                     check: s => s.totalWon >= 100000, progress: s => `${s.totalWon}/100000` },
+  { id:'triple_cherry', cat:'Symbols', icon:'R', name:'Cherry Picker',      desc:'Land triple Cherries.',                          check: s => (s.tripleCounts.CHERRY||0) >= 1 },
+  { id:'triple_lemon',  cat:'Symbols', icon:'Y', name:'Lemon Drop',         desc:'Land triple Lemons.',                            check: s => (s.tripleCounts.LEMON||0) >= 1 },
+  { id:'triple_grape',  cat:'Symbols', icon:'P', name:'Grape Harvest',      desc:'Land triple Grapes.',                            check: s => (s.tripleCounts.GRAPE||0) >= 1 },
+  { id:'triple_bell',   cat:'Symbols', icon:'G', name:'Bell Ringer',        desc:'Land triple Bells.',                             check: s => (s.tripleCounts.BELL||0) >= 1 },
+  { id:'triple_diamond',cat:'Symbols', icon:'B', name:'Diamond Heist',      desc:'Land triple Diamonds.',                          check: s => (s.tripleCounts.DIAMOND||0) >= 1 },
+  { id:'triple_seven',  cat:'Symbols', icon:'7', name:'Lucky Sevens',       desc:'Land triple 7s — jackpot!',                      check: s => (s.tripleCounts.SEVEN||0) >= 1 },
+  { id:'cherry_x5',     cat:'Symbols', icon:'R', name:'Cherry Addict',      desc:'Land triple Cherries 5 times.',                  check: s => (s.tripleCounts.CHERRY||0) >= 5, progress: s => `${s.tripleCounts.CHERRY||0}/5` },
+  { id:'diamond_x3',    cat:'Symbols', icon:'B', name:'Diamond Collector',  desc:'Land triple Diamonds 3 times.',                  check: s => (s.tripleCounts.DIAMOND||0) >= 3, progress: s => `${s.tripleCounts.DIAMOND||0}/3` },
+  { id:'seven_x3',      cat:'Symbols', icon:'7', name:'Jackpot Junkie',     desc:'Land triple 7s three times.',                    check: s => (s.tripleCounts.SEVEN||0) >= 3, progress: s => `${s.tripleCounts.SEVEN||0}/3` },
+  { id:'seven_x10',     cat:'Symbols', icon:'7', name:'Jackpot King',       desc:'Land triple 7s ten times.',                      check: s => (s.tripleCounts.SEVEN||0) >= 10, progress: s => `${s.tripleCounts.SEVEN||0}/10` },
+  { id:'bet_50',        cat:'Spins',   icon:'$', name:'Big Bet',            desc:'Place a 50-credit bet.',                         check: s => s._betFifty },
+  { id:'bet_100',       cat:'Spins',   icon:'$', name:'High Stakes',        desc:'Place a 100-credit bet.',                        check: s => s._betHundred },
+  { id:'bet_250',       cat:'Spins',   icon:'$', name:'All In',             desc:'Place a 250-credit bet.',                        check: s => s._betTwoFifty },
+  { id:'dd_first',      cat:'Wins',    icon:'D', name:'Gambler',            desc:'Use Double Down for the first time.',             check: s => s._ddUsed },
+  { id:'dd_win',        cat:'Wins',    icon:'D', name:'Risk Taker',         desc:'Win a Double Down.',                             check: s => s.doubleDownWins >= 1 },
+  { id:'dd_win5',       cat:'Wins',    icon:'D', name:'Daredevil',          desc:'Win 5 Double Downs.',                            check: s => s.doubleDownWins >= 5, progress: s => `${s.doubleDownWins}/5` },
+  { id:'first_upgrade', cat:'Credits', icon:'U', name:'First Step',         desc:'Purchase your first upgrade.',                   check: s => s.totalUpgradeSpent >= 1 },
+  { id:'spent_3000',    cat:'Credits', icon:'U', name:'Investor',           desc:'Spend 3,000 credits on upgrades.',               check: s => s.totalUpgradeSpent >= 3000, progress: s => `${s.totalUpgradeSpent}/3000` },
+  { id:'spent_10000',   cat:'Credits', icon:'U', name:'High Spender',       desc:'Spend 10,000 credits on upgrades.',              check: s => s.totalUpgradeSpent >= 10000, progress: s => `${s.totalUpgradeSpent}/10000` },
+  { id:'max_upgrade',   cat:'Credits', icon:'U', name:'Perfection',         desc:'Max out any upgrade to its highest level.',      check: s => UPGRADES.some(u => s.upgradeLevels[u.id] >= u.maxLevel) },
+  { id:'busted',        cat:'Spins',   icon:'X', name:'Rock Bottom',        desc:'Hit 0 credits.',                                 check: s => s.totalBusts >= 1 },
+  { id:'comeback',      cat:'Wins',    icon:'W', name:'Comeback Kid',       desc:'Win a spin while holding fewer than 20 credits.', check: s => s._comebackDone },
+  { id:'safety_first',  cat:'Spins',   icon:'S', name:'Safety First',       desc:'Trigger the Safety Net.',                        check: s => s._safetyTriggered },
+  { id:'ghost_rider',   cat:'Spins',   icon:'G', name:'Ghost Rider',        desc:'Use 5 free Ghost Spins.',                        check: s => s.ghostSpinsUsed >= 5, progress: s => `${s.ghostSpinsUsed}/5` },
+];
+
+const ACH_ICON_COLORS = { S:'rgba(60,120,200,.25)', W:'rgba(200,120,20,.25)', C:'rgba(180,130,10,.25)', R:'rgba(160,30,30,.25)', Y:'rgba(160,130,10,.25)', P:'rgba(100,30,160,.25)', G:'rgba(30,120,100,.25)', B:'rgba(30,100,160,.25)', '7':'rgba(180,30,30,.25)', '$':'rgba(30,120,30,.25)', D:'rgba(30,140,30,.25)', U:'rgba(180,130,20,.25)', X:'rgba(80,80,80,.25)' };
+const ACH_TEXT_COLORS  = { S:'#60a0e0', W:'#d09030', C:'#d4a843', R:'#e05050', Y:'#d0c020', P:'#a060d0', G:'#40c0a0', B:'#4090d0', '7':'#e04040', '$':'#50b050', D:'#60c060', U:'#c0a020', X:'#909090' };
+
+let achFilter = 'all';
+
+function filterAch(f, btn) {
+  achFilter = f;
+  document.querySelectorAll('.ach-filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderAchievements();
+}
+
+function checkAchievements() {
+  let anyNew = false;
+  ACHIEVEMENTS.forEach(a => {
+    if (state.achievements.includes(a.id)) return;
+    if (a.check(state)) {
+      state.achievements.push(a.id);
+      anyNew = true;
+      showAchToast(a);
+    }
+  });
+  if (anyNew) { saveState(); updateAchBadge(); }
+}
+
+let toastQueue = [], toastShowing = false;
+
+function showAchToast(a) {
+  toastQueue.push(a);
+  if (!toastShowing) drainToastQueue();
+}
+
+function drainToastQueue() {
+  if (!toastQueue.length) { toastShowing = false; return; }
+  toastShowing = true;
+  const a = toastQueue.shift();
+  const toast = document.getElementById('ach-toast');
+  const iconEl = document.getElementById('ach-toast-icon');
+  iconEl.textContent = a.icon;
+  iconEl.style.background = ACH_ICON_COLORS[a.icon] || 'rgba(40,36,10,.6)';
+  iconEl.style.color = ACH_TEXT_COLORS[a.icon] || '#d4a843';
+  iconEl.style.fontFamily = "'Cinzel Decorative',serif";
+  iconEl.style.fontWeight = '900';
+  iconEl.style.fontSize = '14px';
+  document.getElementById('ach-toast-name').textContent = a.name;
+  document.getElementById('ach-toast-desc').textContent = a.desc;
+  toast.classList.add('show');
+  setTimeout(() => {
+    toast.classList.remove('show');
+    setTimeout(drainToastQueue, 600);
+  }, 3200);
+}
+
+function updateAchBadge() {
+  const remaining = ACHIEVEMENTS.length - state.achievements.length;
+  const badge = document.getElementById('ach-badge');
+  badge.textContent = remaining > 0 ? remaining : '';
+  badge.style.display = remaining > 0 ? '' : 'none';
+}
+
+function renderAchievements() {
+  const grid = document.getElementById('ach-grid');
+  const total = ACHIEVEMENTS.length;
+  const unlocked = state.achievements.length;
+  document.getElementById('ach-count-display').textContent = `${unlocked} / ${total}`;
+  document.getElementById('ach-progress-bar').style.width = `${Math.round(unlocked / total * 100)}%`;
+
+  const filtered = ACHIEVEMENTS.filter(a => {
+    if (achFilter === 'unlocked') return state.achievements.includes(a.id);
+    if (achFilter === 'locked')   return !state.achievements.includes(a.id);
+    if (['Spins','Wins','Credits','Symbols'].includes(achFilter)) return a.cat === achFilter;
+    return true;
+  });
+
+  grid.innerHTML = '';
+  filtered.forEach(a => {
+    const isUnlocked = state.achievements.includes(a.id);
+    const card = document.createElement('div');
+    card.className = 'ach-card ' + (isUnlocked ? 'unlocked' : 'locked');
+    const iconBg  = isUnlocked ? (ACH_ICON_COLORS[a.icon] || 'rgba(80,60,5,.5)') : 'rgba(40,36,10,.6)';
+    const iconCol = isUnlocked ? (ACH_TEXT_COLORS[a.icon] || '#d4a843') : '#3a3020';
+    const prog = !isUnlocked && a.progress ? `<div class="ach-prog-mini">${a.progress(state)}</div>` : '';
+    card.innerHTML = `
+      <div class="ach-card-icon" style="background:${iconBg};color:${iconCol};font-family:'Cinzel Decorative',serif;font-weight:900;font-size:14px">${isUnlocked ? a.icon : '?'}</div>
+      <div class="ach-card-body">
+        <div class="ach-card-name">${isUnlocked ? a.name : '???'}</div>
+        <div class="ach-card-desc">${isUnlocked ? a.desc : 'Keep playing to unlock.'}</div>
+        <div class="ach-card-cat">${a.cat}</div>
+        ${prog}
+      </div>`;
+    grid.appendChild(card);
+  });
+}
+
 function showTab(tab, btn) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
@@ -463,6 +692,7 @@ function showTab(tab, btn) {
   btn.classList.add('active');
   if (tab === 'upgrades') { document.getElementById('shop-credits').textContent = state.credits + ' credits'; renderUpgrades(); }
   if (tab === 'settings') { syncSettingsUI(); }
+  if (tab === 'achievements') { renderAchievements(); }
 }
 
 function syncSettingsUI() {
@@ -525,6 +755,7 @@ function doReset() {
   document.getElementById('win-message').className = 'win-message neutral';
   renderUpgrades();
   updateShopBadge();
+  updateAchBadge();
 }
 
 function renderUpgrades() {
@@ -580,10 +811,12 @@ function buyUpgrade(id) {
   const cost = u.levels[cur].cost;
   if (state.credits < cost) return;
   state.credits -= cost;
+  state.totalUpgradeSpent = (state.totalUpgradeSpent || 0) + cost;
   state.upgradeLevels[id]++;
   applyUpgradeEffects();
   updateUI();
   renderUpgrades();
+  checkAchievements();
   saveState();
 }
 
@@ -808,10 +1041,12 @@ function showDoubleDown(amount) {
 function doubleDown(goDouble) {
   document.getElementById('dd-panel').classList.remove('visible');
   document.getElementById('auto-btn').disabled = false;
+  state._ddUsed = true;
   if (goDouble) {
     if (Math.random() < 0.48) {
       const won = pendingWin * 2;
       state.credits += won; state.totalWon += won;
+      state.doubleDownWins = (state.doubleDownWins || 0) + 1;
       document.getElementById('win-message').textContent = `Doubled!  +${won} credits`;
       document.getElementById('win-message').className = 'win-message big-win';
       spawnCoins(20);
@@ -826,17 +1061,20 @@ function doubleDown(goDouble) {
   }
   pendingWin = 0;
   updateUI();
-  document.getElementById('spin-btn').disabled = false;
+  checkAchievements();
   saveState();
+  document.getElementById('spin-btn').disabled = false;
   if (state.credits <= 0) handleBust();
 }
 
 function handleBust() {
+  state.totalBusts = (state.totalBusts || 0) + 1;
   if (lvl('safety_net') > 0 && !state.safetyNetUsed) {
     state.safetyNetUsed = true;
+    state._safetyTriggered = true;
     const rescue = lvl('safety_net') === 1 ? 100 : 300;
     setTimeout(() => {
-      state.credits = rescue; updateUI(); saveState();
+      state.credits = rescue; updateUI(); checkAchievements(); saveState();
       document.getElementById('win-message').textContent = `Safety Net — ${rescue} credits rescued!`;
       document.getElementById('win-message').className = 'win-message small-win';
     }, 1500);
@@ -844,11 +1082,13 @@ function handleBust() {
     setTimeout(() => {
       state.credits = state.settings.startCredits;
       state.totalWon = 0; streakCount = 0; state.safetyNetUsed = false;
-      updateUI(); saveState();
+      updateUI(); checkAchievements(); saveState();
       document.getElementById('win-message').textContent = `${state.settings.startCredits} credits reloaded — good luck!`;
       document.getElementById('win-message').className = 'win-message small-win';
     }, 2000);
   }
+  checkAchievements();
+  saveState();
 }
 
 async function spin() {
@@ -865,7 +1105,14 @@ async function spin() {
   updateUI();
 
   const isFreeGhostSpin = lvl('ghost_spin') > 0 && state.spinCount % 8 === 0;
-  if (isFreeGhostSpin) state.credits += bet;
+  if (isFreeGhostSpin) { state.credits += bet; state.ghostSpinsUsed = (state.ghostSpinsUsed||0) + 1; }
+
+  if (bet >= 50)  state._betFifty    = true;
+  if (bet >= 100) state._betHundred  = true;
+  if (bet >= 250) state._betTwoFifty = true;
+
+  if (state.credits < 20) state._lowCreditBeforeSpin = true;
+  else state._lowCreditBeforeSpin = false;
 
   [0,1,2].forEach(i => document.getElementById('reel-'+i).classList.remove('winning'));
   document.getElementById('win-message').textContent = '— — —';
@@ -891,12 +1138,19 @@ async function spin() {
   if (isWin) {
     if (!muteSfx) { audio.win.currentTime = 0; audio.win.play().catch(()=>{}); }
     highlightWinningReels(results);
+    state.totalWins = (state.totalWins || 0) + 1;
+    if (results[0] === results[1] && results[1] === results[2]) {
+      state.tripleCounts = state.tripleCounts || {};
+      state.tripleCounts[results[0]] = (state.tripleCounts[results[0]] || 0) + 1;
+    }
+    if (state._lowCreditBeforeSpin) state._comebackDone = true;
     if (lvl('lucky_streak') > 0) streakCount++;
+    state.maxStreak = Math.max(state.maxStreak || 0, streakCount);
   } else {
     const shieldLvl = lvl('streak_shield');
     const shieldThreshold = shieldLvl >= 2 ? 2 : 3;
     if (lvl('lucky_streak') > 0) {
-      if (shieldLvl > 0 && streakCount >= shieldThreshold) { /* streak preserved */ }
+      if (shieldLvl > 0 && streakCount >= shieldThreshold) { }
       else streakCount = 0;
     }
   }
@@ -916,6 +1170,7 @@ async function spin() {
   if (isWin && lvl('double_down') > 0 && !autoRunning) {
     showDoubleDown(win);
     updateUI();
+    checkAchievements();
   } else {
     state.credits += win;
     if (win > 0) {
@@ -924,6 +1179,7 @@ async function spin() {
       wonEl.classList.remove('win-flash'); void wonEl.offsetWidth; wonEl.classList.add('win-flash');
     }
     updateUI();
+    checkAchievements();
     document.getElementById('spin-btn').disabled = false;
     saveState();
     if (state.credits <= 0) handleBust();
@@ -938,6 +1194,7 @@ applyUpgradeEffects();
 updateUI();
 renderUpgrades();
 updateShopBadge();
+updateAchBadge();
 </script>
 </body>
 </html>
