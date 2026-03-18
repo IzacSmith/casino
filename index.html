@@ -113,7 +113,7 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 .upgrades-header{font-family:'Cinzel',serif;font-size:9px;letter-spacing:.3em;color:var(--gold-dark);text-transform:uppercase;text-align:center;margin-bottom:16px;padding-bottom:10px;border-bottom:1px solid #2a2010}
 .credits-reminder{font-family:'Cinzel',serif;font-size:18px;font-weight:700;color:var(--gold-light);display:block;margin-top:4px}
 .upgrades-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.upgrade-card{background:rgba(0,0,0,.35);border:1px solid #2a2218;border-radius:12px;padding:14px 12px;transition:border-color .2s;display:flex;flex-direction:column;gap:7px}
+.upgrade-card{background:rgba(0,0,0,.35);border:1px solid #2a2218;border-radius:12px;padding:14px 12px;transition:border-color .2s;display:flex;flex-direction:column;gap:7px;min-width:0;overflow:hidden}
 .upgrade-card.maxed{border-color:#2a3a10;background:rgba(30,50,10,.25)}
 .upgrade-icon{width:34px;height:34px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
 .upgrade-icon svg{width:20px;height:20px}
@@ -126,14 +126,14 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 .upgrade-icon.teal{background:rgba(20,120,110,.25)}
 .upgrade-icon.amber{background:rgba(160,110,10,.25)}
 .upgrade-icon.gray{background:rgba(80,80,100,.25)}
-.upgrade-name{font-family:'Cinzel',serif;font-size:12px;font-weight:700;letter-spacing:.06em;color:var(--gold-light)}
-.upgrade-level-dots{display:flex;gap:3px;align-items:center;margin-top:1px}
+.upgrade-name{font-family:'Cinzel',serif;font-size:12px;font-weight:700;letter-spacing:.06em;color:var(--gold-light);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+.upgrade-level-dots{display:flex;gap:3px;align-items:center;margin-top:1px;min-width:0}
 .level-dot{width:6px;height:6px;border-radius:50%;background:#2a2218;border:1px solid #3a3020}
 .level-dot.filled{background:var(--gold);border-color:var(--gold-light)}
-.upgrade-desc{font-family:'Raleway',sans-serif;font-size:11px;line-height:1.5;color:#5a5040;flex:1}
+.upgrade-desc{font-family:'Raleway',sans-serif;font-size:11px;line-height:1.5;color:#5a5040;flex:1;word-break:break-word}
 .upgrade-card.maxed .upgrade-desc{color:#4a6030}
-.upgrade-footer{display:flex;align-items:center;justify-content:space-between;margin-top:2px}
-.upgrade-cost{font-family:'Cinzel',serif;font-size:11px;color:var(--gold-dark);font-weight:700}
+.upgrade-footer{display:flex;align-items:center;justify-content:space-between;margin-top:2px;gap:4px;min-width:0}
+.upgrade-cost{font-family:'Cinzel',serif;font-size:11px;color:var(--gold-dark);font-weight:700;white-space:nowrap;min-width:0;overflow:hidden;text-overflow:ellipsis}
 .buy-btn{padding:5px 12px;background:rgba(212,168,67,.1);border:1px solid var(--gold-dark);border-radius:6px;color:var(--gold-dark);font-family:'Cinzel',serif;font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;transition:all .15s}
 .buy-btn:hover{background:rgba(212,168,67,.2);color:var(--gold-light);border-color:var(--gold)}
 .buy-btn:disabled{opacity:.3;cursor:not-allowed}
@@ -502,6 +502,21 @@ function getUpgradeCost(u) {
   return cur < u.levels.length ? u.levels[cur].cost : 0;
 }
 
+function shortNum(n) {
+  if (n < 1000) return n.toString();
+  const tiers = [
+    [1e18, 'Qt'], [1e15, 'Qd'], [1e12, 'T'],
+    [1e9,  'B'],  [1e6,  'M'], [1e3, 'k']
+  ];
+  for (const [val, suffix] of tiers) {
+    if (n >= val) {
+      const d = n / val;
+      return (d % 1 === 0 ? d.toFixed(0) : d.toFixed(1).replace(/\.0$/, '')) + suffix;
+    }
+  }
+  return n.toString();
+}
+
 function saveState() {
   try {
     localStorage.setItem('lucky_reels_v2', JSON.stringify(state));
@@ -784,8 +799,8 @@ function renderUpgrades() {
       const chargeColor = charges === 0 ? '#6a4a4a' : '#c080e0';
       nextDesc = charges === 0
         ? 'No charges — streak is <b style="color:#c06060">unprotected</b>. Each purchase adds 1 charge. Each loss on a streak burns 1 charge. Costs compound with each buy.'
-        : `<b style="color:${chargeColor}">${charges} charge${charges !== 1 ? 's' : ''}</b> remaining. Each loss on an active streak consumes one charge. At 0, your streak resets normally.`;
-      dotsHtml = `<div style="font-family:'Cinzel',serif;font-size:10px;color:${chargeColor};margin-top:2px">${charges} charge${charges !== 1 ? 's' : ''}</div>`;
+        : `<b style="color:${chargeColor}">${shortNum(charges)} charge${charges !== 1 ? 's' : ''}</b> remaining. Each loss on an active streak consumes one charge. At 0, your streak resets normally.`;
+      dotsHtml = `<div style="font-family:'Cinzel',serif;font-size:10px;color:${chargeColor};margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${shortNum(charges)} charge${charges !== 1 ? 's' : ''}</div>`;
     } else {
       nextCost = !isMaxed ? u.levels[cur].cost : 0;
       nextDesc = !isMaxed ? u.levels[cur].desc : u.levels[u.maxLevel - 1].desc;
@@ -807,7 +822,7 @@ function renderUpgrades() {
       <div class="upgrade-footer">
         ${isMaxed
           ? `<div class="upgrade-cost"></div><div class="maxed-badge">Max</div>`
-          : `<div class="upgrade-cost">${nextCost.toLocaleString()} cr${isUnlimited && cur > 0 ? '<span style="font-family:Raleway;font-size:8px;color:#5a4060;display:block">×' + u.costFactor.toFixed(2) + ' each time</span>' : ''}</div>
+          : `<div class="upgrade-cost">${shortNum(nextCost)} cr${isUnlimited && cur > 0 ? '<span style="font-family:Raleway;font-size:8px;color:#5a4060;display:block">×' + u.costFactor.toFixed(2) + ' each time</span>' : ''}</div>
              <button class="buy-btn" ${state.credits < nextCost ? 'disabled' : ''} onclick="buyUpgrade('${u.id}')">
                ${isUnlimited ? '+ Charge' : cur > 0 ? 'Upgrade' : 'Buy'}
              </button>`
@@ -868,7 +883,7 @@ function renderActivePips() {
   if (lvl('win_boost') > 0) pip('multi', `+${[0,15,28,45][lvl('win_boost')]}% wins`);
   if (lvl('safety_net') > 0 && !state.safetyNetUsed) pip('shield', 'Safety Net');
   const shieldCharges = lvl('streak_shield');
-  if (shieldCharges > 0) pip('shield', `Shield ×${shieldCharges}`);
+  if (shieldCharges > 0) pip('shield', `Shield ×${shortNum(shieldCharges)}`);
   if (lvl('ghost_spin') > 0) { const n = 8 - (state.spinCount % 8); if (n <= 3) pip('ghost', 'Free in ' + n); }
   if (lvl('lucky_reel') > 0) pip('reel', 'Lucky Reel ' + lvl('lucky_reel'));
 }
