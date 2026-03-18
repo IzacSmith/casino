@@ -711,7 +711,7 @@ function showTab(tab, btn) {
   document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
   document.getElementById('page-' + tab).classList.add('active');
   btn.classList.add('active');
-  if (tab === 'upgrades') { document.getElementById('shop-credits').textContent = state.credits + ' credits'; renderUpgrades(); }
+  if (tab === 'upgrades') { document.getElementById('shop-credits').textContent = shortNum(state.credits) + ' credits'; renderUpgrades(); }
   if (tab === 'settings') { syncSettingsUI(); }
   if (tab === 'achievements') { renderAchievements(); }
 }
@@ -830,7 +830,7 @@ function renderUpgrades() {
       </div>`;
     grid.appendChild(card);
   });
-  document.getElementById('shop-credits').textContent = state.credits + ' credits';
+  document.getElementById('shop-credits').textContent = shortNum(state.credits) + ' credits';
   updateShopBadge();
 }
 
@@ -937,8 +937,16 @@ function setBet(amount) {
 function togglePaytable() { document.getElementById('paytable').classList.toggle('visible'); }
 
 function updateUI() {
-  document.getElementById('credits').textContent = state.credits;
-  document.getElementById('won-display').textContent = state.totalWon;
+  const cr = state.credits;
+  const crEl = document.getElementById('credits');
+  crEl.textContent = shortNum(cr);
+  crEl.style.fontSize = cr >= 1e6 ? '14px' : cr >= 1e4 ? '17px' : '22px';
+
+  const wo = state.totalWon;
+  const woEl = document.getElementById('won-display');
+  woEl.textContent = shortNum(wo);
+  woEl.style.fontSize = wo >= 1e6 ? '14px' : wo >= 1e4 ? '17px' : '22px';
+
   renderActivePips();
 }
 
@@ -1104,7 +1112,7 @@ function doubleDown(goDouble) {
   checkAchievements();
   saveState();
   document.getElementById('spin-btn').disabled = false;
-  if (state.credits <= 0) handleBust();
+  if (state.credits < 5) handleBust();
 }
 
 function handleBust() {
@@ -1229,7 +1237,7 @@ async function spin() {
     checkAchievements();
     document.getElementById('spin-btn').disabled = false;
     saveState();
-    if (state.credits <= 0) handleBust();
+    if (state.credits < 5) handleBust();
   }
 }
 
