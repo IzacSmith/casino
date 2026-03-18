@@ -363,7 +363,7 @@ const audio = {
   rolling: new Audio('rolling.wav'),
   win:     new Audio('win.wav'),
 };
-audio.bg.loop = true; audio.bg.volume = 0.20;
+audio.bg.loop = true; audio.bg.volume = 0.05;
 audio.rolling.loop = true; audio.rolling.volume = 0.6;
 audio.win.volume = 0.9;
 let bgStarted = false;
@@ -392,7 +392,7 @@ const PAYTABLE_ROWS = [
   { keys:['GRAPE','GRAPE','GRAPE'],       mult:'× 7'  },
   { keys:['LEMON','LEMON','LEMON'],       mult:'× 4'  },
   { keys:['CHERRY','CHERRY','CHERRY'],    mult:'× 3'  },
-  { keys:[], label:'Any 2 match',         mult:'× 1'  },
+  { keys:[], label:'Any 2 match',         mult:'× 1.5'  },
 ];
 
 const UPGRADES = [
@@ -978,7 +978,7 @@ function calcWin(syms, betAmt) {
     if (mult >= 40) { msg = `JACKPOT  ${SYMBOL_NAMES[a]}  +`; msgClass = 'big-win jackpot-message'; }
     else { msg = `${SYMBOL_NAMES[a]}  ${SYMBOL_NAMES[a]}  ${SYMBOL_NAMES[a]}  —  +`; msgClass = 'big-win'; }
   } else if (a === b || b === c || a === c) {
-    baseWin = betAmt;
+    baseWin = Math.floor(betAmt * 1.5);
     msg = 'Two of a kind  —  +'; msgClass = 'small-win';
   } else {
     msg = 'No match — better luck next time'; msgClass = 'loss';
