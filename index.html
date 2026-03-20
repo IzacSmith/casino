@@ -37,7 +37,6 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 .stat-value{font-family:'Cinzel',serif;font-size:22px;font-weight:700;color:var(--gold-light);line-height:1}
 .stat-value.win-flash{animation:flash-gold .4s ease-in-out 4}
 @keyframes flash-gold{0%,100%{color:var(--gold-light)}50%{color:#fff;text-shadow:0 0 12px var(--gold)}}
-.active-upgrades{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:12px;min-height:0}
 .upgrade-pip{font-family:'Cinzel',serif;font-size:9px;letter-spacing:.1em;padding:3px 8px;border-radius:20px;border:1px solid;text-transform:uppercase}
 .upgrade-pip.auto{color:#60a8e0;border-color:#1a4a70;background:rgba(60,100,180,.12)}
 .upgrade-pip.streak{color:#80c040;border-color:#305010;background:rgba(60,140,20,.12)}
@@ -74,7 +73,8 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 .dd-btn.double:hover{background:linear-gradient(160deg,#207a20 0%,#288028 100%)}
 .dd-btn.collect{background:rgba(0,0,0,.4);border:1px solid #3a3020;color:var(--gold-dark)}
 .dd-btn.collect:hover{color:var(--gold);border-color:var(--gold-dark)}
-.bet-section{margin-bottom:12px}
+.bet-section{margin-bottom:12px;overflow:hidden;max-height:200px;transition:max-height .35s cubic-bezier(0.4,0,0.2,1),opacity .3s,margin-bottom .3s;opacity:1}
+.bet-section.hidden{max-height:0;opacity:0;margin-bottom:0}
 .bet-label{font-family:'Cinzel',serif;font-size:9px;letter-spacing:.25em;color:var(--gold-dark);text-align:center;display:block;margin-bottom:7px;text-transform:uppercase}
 .bet-buttons{display:flex;gap:7px;justify-content:center}
 .bet-btn{flex:1;max-width:80px;padding:9px 6px;background:rgba(0,0,0,.3);border:1px solid #2a2218;border-radius:8px;color:var(--gold-dark);font-family:'Cinzel',serif;font-size:13px;font-weight:700;cursor:pointer;transition:all .15s;letter-spacing:.05em}
@@ -105,11 +105,42 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 .auto-spin-btn.running{border-color:#3080c0;color:#60b0e8;background:rgba(40,80,140,.2);box-shadow:0 0 10px rgba(60,120,200,.2);animation:auto-pulse 1.5s ease-in-out infinite}
 .auto-spin-btn.locked{color:#2a2218;border-color:#1a1408;cursor:not-allowed}
 @keyframes auto-pulse{0%,100%{box-shadow:0 0 10px rgba(60,120,200,.2)}50%{box-shadow:0 0 18px rgba(60,120,200,.4)}}
-.auto-speed-row{display:none;align-items:center;gap:8px;margin-top:8px}
-.auto-speed-row.visible{display:flex}
-.auto-speed-label{font-family:'Raleway',sans-serif;font-size:10px;color:#4a6080}
-.speed-btn{padding:3px 8px;background:rgba(40,80,140,.2);border:1px solid #1a3050;border-radius:4px;color:#4a80b0;font-family:'Cinzel',serif;font-size:9px;cursor:pointer;transition:all .15s}
-.speed-btn.active{background:rgba(60,120,200,.3);border-color:#3a70b0;color:#80c0f0}
+.auto-group{display:flex;gap:0;flex-direction:column}
+.auto-top-row{display:flex;gap:0}
+.auto-spin-btn{padding:15px 14px;background:rgba(0,0,0,.4);border:1px solid #1a3050;border-radius:12px;color:#2a5080;font-family:'Cinzel',serif;font-size:9px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;cursor:pointer;transition:all .2s;white-space:nowrap}
+.auto-spin-btn:hover{border-color:#2a6090;color:#4a90c0}
+.auto-spin-btn.running{border-color:#3080c0;color:#60b0e8;background:rgba(40,80,140,.2);box-shadow:0 0 10px rgba(60,120,200,.2);animation:auto-pulse 1.5s ease-in-out infinite}
+.auto-spin-btn.locked{color:#2a2218;border-color:#1a1408;cursor:not-allowed}
+.auto-spin-btn.has-panel{border-radius:12px 0 0 12px;border-right:none}
+.auto-arrow-btn{display:none;padding:0 10px;background:rgba(0,0,0,.3);border:1px solid #1a3050;border-left:none;border-radius:0 12px 12px 0;color:#2a4060;cursor:pointer;transition:all .2s;flex-direction:column;align-items:center;justify-content:center;gap:2px;min-width:30px}
+.auto-arrow-btn.shown{display:flex}
+.auto-arrow-btn:hover{background:rgba(40,80,140,.15);color:#4a80b0;border-color:#2a5080}
+.auto-arrow-btn.panel-open{color:#60a0d0;background:rgba(40,80,140,.2);border-color:#2a6090}
+.auto-arrow-icon{font-size:10px;transition:transform .3s;line-height:1}
+.auto-arrow-btn.panel-open .auto-arrow-icon{transform:rotate(180deg)}
+.auto-arrow-label{font-family:'Raleway',sans-serif;font-size:7px;color:inherit;letter-spacing:.05em;text-transform:uppercase;line-height:1;white-space:nowrap}
+.auto-panel{overflow:hidden;max-height:0;transition:max-height .4s cubic-bezier(0.4,0,0.2,1),opacity .3s,margin-top .3s;opacity:0;margin-top:0}
+.auto-panel.open{max-height:300px;opacity:1;margin-top:8px}
+.auto-panel-inner{background:rgba(0,0,0,.38);border:1px solid #1a3050;border-radius:10px;padding:13px 14px;display:flex;flex-direction:column;gap:11px}
+.auto-panel-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.auto-panel-label{font-family:'Cinzel',serif;font-size:8px;letter-spacing:.2em;color:#3a5070;text-transform:uppercase;white-space:nowrap;min-width:34px}
+.speed-btn{padding:5px 11px;background:rgba(40,80,140,.2);border:1px solid #1a3050;border-radius:6px;color:#4a80b0;font-family:'Cinzel',serif;font-size:9px;font-weight:700;cursor:pointer;transition:all .15s}
+.speed-btn.active{background:rgba(60,120,200,.3);border-color:#3a70b0;color:#80c0f0;box-shadow:0 0 6px rgba(60,120,200,.25)}
+.auto-mode-btn{flex:1;padding:6px 4px;border-radius:6px;border:1px solid #2a2a2a;background:rgba(0,0,0,.3);font-family:'Cinzel',serif;font-size:9px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;transition:all .15s;color:#4a4030;text-align:center}
+.auto-mode-btn:hover{border-color:#4a4030;color:#8a7040}
+.auto-mode-btn.mode-active{background:rgba(60,120,200,.2);border-color:#3a70b0;color:#80c0f0;box-shadow:0 0 6px rgba(60,120,200,.2)}
+.auto-mode-btn.mode-active.mode-max{background:rgba(30,100,20,.25);border-color:#3a8020;color:#80d040;box-shadow:0 0 6px rgba(60,180,30,.2)}
+.auto-mode-btn.mode-active.mode-half{background:rgba(180,130,20,.18);border-color:var(--gold-dark);color:var(--gold-light);box-shadow:0 0 6px rgba(212,168,67,.2)}
+.auto-preset-divider{height:1px;background:rgba(255,255,255,.04);margin:0 -14px;transition:opacity .25s}
+.auto-preset-divider.hidden{opacity:0}
+.auto-bet-row-wrap{overflow:hidden;max-height:60px;transition:max-height .3s cubic-bezier(0.4,0,0.2,1),opacity .25s;opacity:1}
+.auto-bet-row-wrap.hidden{max-height:0;opacity:0}
+.auto-bet-presets{display:flex;gap:6px;flex-wrap:wrap}
+.auto-preset-btn{flex:1;min-width:36px;padding:6px 4px;background:rgba(0,0,0,.3);border:1px solid #2a2218;border-radius:6px;color:var(--gold-dark);font-family:'Cinzel',serif;font-size:12px;font-weight:700;cursor:pointer;transition:all .15s;text-align:center}
+.auto-preset-btn:hover{background:rgba(212,168,67,.1);border-color:var(--gold-dark);color:var(--gold-light)}
+.auto-preset-btn.active{background:rgba(212,168,67,.18);border-color:var(--gold);color:var(--gold-light);box-shadow:0 0 6px rgba(212,168,67,.2)}
+.active-upgrades{display:flex;flex-wrap:wrap;gap:5px;min-height:0;overflow:hidden;max-height:0;transition:max-height .3s,margin-bottom .3s;margin-bottom:0}
+.active-upgrades.has-pips{max-height:80px;margin-bottom:12px}
 .paytable-toggle{text-align:center;margin-top:14px}
 .paytable-toggle-btn{background:none;border:none;color:var(--gold-dark);font-family:'Cinzel',serif;font-size:9px;letter-spacing:.2em;text-transform:uppercase;cursor:pointer;padding:6px 16px;transition:color .2s}
 .paytable-toggle-btn:hover{color:var(--gold)}
@@ -261,7 +292,7 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
           <button class="dd-btn collect" onclick="doubleDown(false)">Collect</button>
         </div>
       </div>
-      <div class="bet-section">
+      <div class="bet-section" id="bet-section">
         <span class="bet-label">Select Bet</span>
         <div class="bet-buttons" id="bet-buttons">
           <button class="bet-btn" onclick="setBet(5)">5</button>
@@ -278,13 +309,43 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
       </div>
       <div class="bottom-controls">
         <button class="spin-button" id="spin-btn" onclick="spin()">SPIN</button>
-        <button class="auto-spin-btn locked" id="auto-btn" onclick="toggleAuto()">AUTO</button>
-      </div>
-      <div class="auto-speed-row" id="auto-speed-row">
-        <span class="auto-speed-label">Speed:</span>
-        <button class="speed-btn active" onclick="setAutoSpeed(2200,this)">Slow</button>
-        <button class="speed-btn" onclick="setAutoSpeed(1300,this)">Fast</button>
-        <button class="speed-btn" onclick="setAutoSpeed(650,this)">Turbo</button>
+        <div class="auto-group">
+          <div class="auto-top-row">
+            <button class="auto-spin-btn locked" id="auto-btn" onclick="toggleAuto()">AUTO</button>
+            <button class="auto-arrow-btn locked" id="auto-arrow-btn" onclick="toggleAutoPanel()">
+              <span class="auto-arrow-icon">&#9660;</span>
+              <span class="auto-arrow-label">settings</span>
+            </button>
+          </div>
+          <div class="auto-panel" id="auto-panel">
+            <div class="auto-panel-inner">
+              <div class="auto-panel-row">
+                <span class="auto-panel-label">Speed</span>
+                <button class="speed-btn active" onclick="setAutoSpeed(2200,this)">Slow</button>
+                <button class="speed-btn" onclick="setAutoSpeed(1300,this)">Fast</button>
+                <button class="speed-btn" onclick="setAutoSpeed(650,this)">Turbo</button>
+              </div>
+              <div class="auto-panel-row">
+                <span class="auto-panel-label">Mode</span>
+                <button class="auto-mode-btn mode-normal mode-active" id="mode-normal" onclick="setAutoBetMode('normal',this)">Normal</button>
+                <button class="auto-mode-btn mode-half" id="mode-half" onclick="setAutoBetMode('half',this)">Half</button>
+                <button class="auto-mode-btn mode-max" id="mode-max" onclick="setAutoBetMode('max',this)">Max</button>
+              </div>
+              <div class="auto-preset-divider" id="auto-preset-divider"></div>
+              <div class="auto-bet-row-wrap" id="auto-bet-row-wrap">
+              <div class="auto-panel-row" id="auto-bet-row">
+                <span class="auto-panel-label">Bet</span>
+                <div class="auto-bet-presets" id="auto-bet-presets">
+                  <button class="auto-preset-btn" onclick="setAutoPresetBet(5,this)">5</button>
+                  <button class="auto-preset-btn active" onclick="setAutoPresetBet(10,this)">10</button>
+                  <button class="auto-preset-btn" onclick="setAutoPresetBet(30,this)">30</button>
+                  <button class="auto-preset-btn" onclick="setAutoPresetBet(50,this)">50</button>
+                </div>
+              </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
       <div class="paytable-toggle">
         <button class="paytable-toggle-btn" onclick="togglePaytable()">&#9660; Pay Table &#9660;</button>
@@ -787,8 +848,12 @@ function doReset() {
   streakCount = 0; pendingWin = 0; bet = 10;
   autoRunning = false; clearTimeout(autoTimer);
   const autoBtn = document.getElementById('auto-btn');
-  autoBtn.classList.remove('running'); autoBtn.textContent = 'AUTO'; autoBtn.classList.add('locked');
-  document.getElementById('auto-speed-row').classList.remove('visible');
+  autoBtn.classList.remove('running'); autoBtn.textContent = 'AUTO'; autoBtn.classList.add('locked'); autoBtn.classList.remove('has-panel');
+  const arrowBtn = document.getElementById('auto-arrow-btn');
+  arrowBtn.classList.remove('panel-open','shown');
+  document.getElementById('auto-panel').classList.remove('open');
+  autoPanelOpen = false; autoBetMode = 'normal';
+  document.getElementById('bet-section').classList.remove('hidden');
   document.getElementById('custom-bet-row').classList.remove('visible');
   const betBtns = document.getElementById('bet-buttons');
   ['bet-100','bet-250'].forEach(id => { const b = document.getElementById(id); if (b) b.remove(); });
@@ -886,18 +951,26 @@ function applyUpgradeEffects() {
   const autoBtn = document.getElementById('auto-btn');
   if (lvl('auto_spin') > 0) {
     autoBtn.classList.remove('locked');
-    document.getElementById('auto-speed-row').classList.add('visible');
+    autoBtn.classList.add('has-panel');
+    const arrowBtn = document.getElementById('auto-arrow-btn');
+    arrowBtn.classList.add('shown');
   }
-
   if (lvl('custom_bet') > 0) {
     document.getElementById('custom-bet-row').classList.add('visible');
   }
   const betBtns = document.getElementById('bet-buttons');
+  const autoPresets = document.getElementById('auto-bet-presets');
   if (lvl('high_roller') >= 1 && !document.getElementById('bet-100')) {
     const b = document.createElement('button'); b.className = 'bet-btn'; b.id = 'bet-100'; b.textContent = '100'; b.onclick = () => setBet(100); betBtns.appendChild(b);
+    if (autoPresets && !document.getElementById('auto-preset-100')) {
+      const p = document.createElement('button'); p.className = 'auto-preset-btn'; p.id = 'auto-preset-100'; p.textContent = '100'; p.onclick = function(){ setAutoPresetBet(100, this); }; autoPresets.appendChild(p);
+    }
   }
   if (lvl('high_roller') >= 2 && !document.getElementById('bet-250')) {
     const b = document.createElement('button'); b.className = 'bet-btn'; b.id = 'bet-250'; b.textContent = '250'; b.onclick = () => setBet(250); betBtns.appendChild(b);
+    if (autoPresets && !document.getElementById('auto-preset-250')) {
+      const p = document.createElement('button'); p.className = 'auto-preset-btn'; p.id = 'auto-preset-250'; p.textContent = '250'; p.onclick = function(){ setAutoPresetBet(250, this); }; autoPresets.appendChild(p);
+    }
   }
   renderActivePips();
 }
@@ -914,6 +987,7 @@ function renderActivePips() {
   if (shieldCharges > 0) pip('shield', `Shield ×${shortNum(shieldCharges)}`);
   if (lvl('ghost_spin') > 0) { const n = 8 - (state.spinCount % 8); if (n <= 3) pip('ghost', 'Free in ' + n); }
   if (lvl('lucky_reel') > 0) pip('reel', 'Lucky Reel ' + lvl('lucky_reel'));
+  c.classList.toggle('has-pips', c.children.length > 0);
 }
 
 function makeCellEl(key) {
@@ -960,7 +1034,7 @@ function setBet(amount) {
   bet = amount;
   document.getElementById('bet-display').textContent = amount;
   document.querySelectorAll('.bet-btn').forEach(b => b.classList.toggle('active', parseInt(b.textContent) === amount));
-
+  document.querySelectorAll('.auto-preset-btn').forEach(b => b.classList.toggle('active', parseInt(b.textContent) === amount));
   const ci = document.getElementById('custom-bet-input');
   if (ci) ci.style.borderColor = '';
 }
@@ -1015,10 +1089,51 @@ function setAutoSpeed(ms, btn) {
   if (autoRunning) { clearTimeout(autoTimer); scheduleAuto(); }
 }
 
+let autoBetMode = 'normal';
+let autoPanelOpen = false;
+
+function toggleAutoPanel() {
+  if (lvl('auto_spin') === 0) return;
+  autoPanelOpen = !autoPanelOpen;
+  document.getElementById('auto-panel').classList.toggle('open', autoPanelOpen);
+  document.getElementById('auto-arrow-btn').classList.toggle('panel-open', autoPanelOpen);
+}
+
+function setAutoBetMode(mode, btn) {
+  autoBetMode = mode;
+  document.querySelectorAll('.auto-mode-btn').forEach(b => b.classList.remove('mode-active'));
+  btn.classList.add('mode-active');
+  const isNormal = mode === 'normal';
+  document.getElementById('auto-bet-row-wrap').classList.toggle('hidden', !isNormal);
+  document.getElementById('auto-preset-divider').classList.toggle('hidden', !isNormal);
+}
+
+function setAutoPresetBet(amount, btn) {
+  bet = amount;
+  document.getElementById('bet-display').textContent = amount;
+  document.querySelectorAll('.bet-btn').forEach(b => b.classList.toggle('active', parseInt(b.textContent) === amount));
+  document.querySelectorAll('.auto-preset-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  const ci = document.getElementById('custom-bet-input');
+  if (ci) ci.style.borderColor = '';
+}
+
+function toggleAutoBetMode(mode, btn) {
+  if (autoBetMode === mode) {
+    autoBetMode = 'normal';
+    document.querySelectorAll('.auto-bet-btn').forEach(b => b.classList.remove('auto-active'));
+  } else {
+    autoBetMode = mode;
+    document.querySelectorAll('.auto-bet-btn').forEach(b => b.classList.remove('auto-active'));
+    btn.classList.add('auto-active');
+  }
+}
+
 function toggleAuto() {
   if (lvl('auto_spin') === 0) return;
   autoRunning = !autoRunning;
   const btn = document.getElementById('auto-btn');
+  document.getElementById('bet-section').classList.toggle('hidden', autoRunning);
   if (autoRunning) {
     btn.classList.add('running'); btn.textContent = 'STOP';
     renderActivePips(); scheduleAuto();
@@ -1031,6 +1146,15 @@ function toggleAuto() {
 function scheduleAuto() {
   autoTimer = setTimeout(() => {
     if (autoRunning && !spinning && !document.getElementById('dd-panel').classList.contains('visible')) {
+      if (autoBetMode === 'max') {
+        bet = state.credits;
+        document.getElementById('bet-display').textContent = shortNum(bet);
+        document.querySelectorAll('.bet-btn').forEach(b => b.classList.remove('active'));
+      } else if (autoBetMode === 'half') {
+        bet = Math.max(1, Math.floor(state.credits / 2));
+        document.getElementById('bet-display').textContent = shortNum(bet);
+        document.querySelectorAll('.bet-btn').forEach(b => b.classList.remove('active'));
+      }
       spin().then(() => { if (autoRunning) scheduleAuto(); });
     } else if (autoRunning) { scheduleAuto(); }
   }, autoSpeed);
