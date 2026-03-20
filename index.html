@@ -80,6 +80,18 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 .bet-btn{flex:1;max-width:80px;padding:9px 6px;background:rgba(0,0,0,.3);border:1px solid #2a2218;border-radius:8px;color:var(--gold-dark);font-family:'Cinzel',serif;font-size:13px;font-weight:700;cursor:pointer;transition:all .15s;letter-spacing:.05em}
 .bet-btn:hover{background:rgba(212,168,67,.1);border-color:var(--gold-dark);color:var(--gold-light)}
 .bet-btn.active{background:rgba(212,168,67,.15);border-color:var(--gold);color:var(--gold-light);box-shadow:0 0 8px rgba(212,168,67,.2)}
+
+.custom-bet-row{display:none;margin-top:8px;gap:7px;align-items:center}
+.custom-bet-row.visible{display:flex}
+.custom-bet-input{flex:1;padding:9px 12px;background:rgba(0,0,0,.4);border:1px solid #2a2218;border-radius:8px;color:var(--gold-light);font-family:'Cinzel',serif;font-size:15px;font-weight:700;text-align:center;outline:none;transition:border-color .15s;-moz-appearance:textfield}
+.custom-bet-input::-webkit-inner-spin-button,.custom-bet-input::-webkit-outer-spin-button{-webkit-appearance:none}
+.custom-bet-input:focus{border-color:var(--gold)}
+.custom-bet-input::placeholder{color:#3a2a10;font-size:12px}
+.custom-bet-apply{padding:9px 14px;background:rgba(212,168,67,.12);border:1px solid var(--gold-dark);border-radius:8px;color:var(--gold-dark);font-family:'Cinzel',serif;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;white-space:nowrap;transition:all .15s}
+.custom-bet-apply:hover{background:rgba(212,168,67,.22);color:var(--gold-light);border-color:var(--gold)}
+.custom-bet-max{padding:9px 12px;background:rgba(180,130,20,.15);border:1px solid #6a4a10;border-radius:8px;color:#c08020;font-family:'Cinzel',serif;font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;white-space:nowrap;transition:all .15s}
+.custom-bet-max:hover{background:rgba(212,168,67,.25);color:var(--gold-light);border-color:var(--gold)}
+
 .bottom-controls{display:flex;gap:10px}
 .spin-button{flex:1;padding:15px;background:linear-gradient(160deg,#a01818 0%,var(--crimson) 50%,#8a1010 100%);border:none;border-radius:12px;color:#fff;font-family:'Cinzel Decorative',serif;font-size:17px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;cursor:pointer;transition:all .15s;position:relative;overflow:hidden;box-shadow:0 4px 20px rgba(192,57,43,.3),inset 0 1px 0 rgba(255,255,255,.1),inset 0 -2px 0 rgba(0,0,0,.3)}
 .spin-button::after{content:'';position:absolute;top:0;left:-100%;width:60%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.12),transparent);transform:skewX(-20deg);transition:left .4s}
@@ -224,7 +236,7 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
     <div class="corner-ornament bl"></div>
     <div class="corner-ornament br"></div>
 
-    <!-- PLAY -->
+    
     <div class="page active" id="page-play">
       <div class="stats-row">
         <div class="stat-box"><span class="stat-label">Credits</span><span class="stat-value" id="credits">200</span></div>
@@ -257,6 +269,12 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
           <button class="bet-btn" onclick="setBet(30)">30</button>
           <button class="bet-btn" onclick="setBet(50)">50</button>
         </div>
+        
+        <div class="custom-bet-row" id="custom-bet-row">
+          <input class="custom-bet-input" type="number" id="custom-bet-input" min="1" placeholder="Custom amount…">
+          <button class="custom-bet-apply" onclick="applyCustomBet()">Set</button>
+          <button class="custom-bet-max" onclick="setCustomBetMax()">MAX</button>
+        </div>
       </div>
       <div class="bottom-controls">
         <button class="spin-button" id="spin-btn" onclick="spin()">SPIN</button>
@@ -277,13 +295,13 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
       </div>
     </div>
 
-    <!-- UPGRADES -->
+    
     <div class="page" id="page-upgrades">
       <div class="upgrades-header">Shop<span class="credits-reminder" id="shop-credits">200 credits</span></div>
       <div class="upgrades-grid" id="upgrades-grid"></div>
     </div>
 
-    <!-- ACHIEVEMENTS -->
+    
     <div class="page" id="page-achievements">
       <div class="ach-header">
         Achievements
@@ -302,7 +320,7 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
       <div class="ach-grid" id="ach-grid"></div>
     </div>
 
-    <!-- SETTINGS -->
+    
     <div class="page" id="page-settings">
       <div class="settings-section">
         <div class="settings-title">Bust Credits</div>
@@ -461,6 +479,11 @@ const UPGRADES = [
     id: 'ghost_spin', name: 'Ghost Spin', maxLevel: 1, iconColor: 'gray',
     iconSvg: `<svg viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M5 20 L5 10 Q5 3 11 3 Q17 3 17 10 L17 20 L14 17 L11 20 L8 17 Z" stroke="#8090a0" stroke-width="1.8" fill="none"/></svg>`,
     levels: [{ cost: 2800, desc: 'Every 8th spin is free — bet is fully refunded regardless of result.' }],
+  },
+  {
+    id: 'custom_bet', name: 'Custom Bet', maxLevel: 1, iconColor: 'amber',
+    iconSvg: `<svg viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="2" y="6" width="18" height="10" rx="2" stroke="#d4a843" stroke-width="1.8"/><line x1="7" y1="9" x2="7" y2="13" stroke="#d4a843" stroke-width="1.5" stroke-linecap="round"/><line x1="11" y1="9" x2="11" y2="13" stroke="#d4a843" stroke-width="1.5" stroke-linecap="round"/><line x1="15" y1="9" x2="15" y2="13" stroke="#d4a843" stroke-width="1.5" stroke-linecap="round"/></svg>`,
+    levels: [{ cost: 500, desc: 'Adds a custom bet input — type any amount up to your current credits. Use MAX to go all in.' }],
   },
   {
     id: 'streak_shield', name: 'Streak Shield', maxLevel: 9999, unlimited: true,
@@ -766,6 +789,7 @@ function doReset() {
   const autoBtn = document.getElementById('auto-btn');
   autoBtn.classList.remove('running'); autoBtn.textContent = 'AUTO'; autoBtn.classList.add('locked');
   document.getElementById('auto-speed-row').classList.remove('visible');
+  document.getElementById('custom-bet-row').classList.remove('visible');
   const betBtns = document.getElementById('bet-buttons');
   ['bet-100','bet-250'].forEach(id => { const b = document.getElementById(id); if (b) b.remove(); });
   setBet(10);
@@ -864,6 +888,10 @@ function applyUpgradeEffects() {
     autoBtn.classList.remove('locked');
     document.getElementById('auto-speed-row').classList.add('visible');
   }
+
+  if (lvl('custom_bet') > 0) {
+    document.getElementById('custom-bet-row').classList.add('visible');
+  }
   const betBtns = document.getElementById('bet-buttons');
   if (lvl('high_roller') >= 1 && !document.getElementById('bet-100')) {
     const b = document.createElement('button'); b.className = 'bet-btn'; b.id = 'bet-100'; b.textContent = '100'; b.onclick = () => setBet(100); betBtns.appendChild(b);
@@ -932,9 +960,39 @@ function setBet(amount) {
   bet = amount;
   document.getElementById('bet-display').textContent = amount;
   document.querySelectorAll('.bet-btn').forEach(b => b.classList.toggle('active', parseInt(b.textContent) === amount));
+
+  const ci = document.getElementById('custom-bet-input');
+  if (ci) ci.style.borderColor = '';
 }
 
 function togglePaytable() { document.getElementById('paytable').classList.toggle('visible'); }
+
+function applyCustomBet() {
+  const input = document.getElementById('custom-bet-input');
+  let val = parseInt(input.value);
+  if (isNaN(val) || val < 1) {
+    input.style.borderColor = 'var(--crimson)';
+    setTimeout(() => input.style.borderColor = '', 800);
+    return;
+  }
+
+  val = Math.min(val, state.credits);
+  val = Math.max(val, 1);
+  input.value = val;
+
+  document.querySelectorAll('.bet-btn').forEach(b => b.classList.remove('active'));
+  bet = val;
+  document.getElementById('bet-display').textContent = shortNum(val);
+
+  input.style.borderColor = 'var(--gold)';
+  setTimeout(() => input.style.borderColor = '', 800);
+}
+
+function setCustomBetMax() {
+  const input = document.getElementById('custom-bet-input');
+  input.value = state.credits;
+  applyCustomBet();
+}
 
 function updateUI() {
   const cr = state.credits;
@@ -1201,7 +1259,6 @@ async function spin() {
   } else {
     const shieldCharges = lvl('streak_shield');
     if (shieldCharges > 0 && streakCount >= 1) {
-      // Burn one charge, streak preserved
       state.upgradeLevels['streak_shield']--;
       saveState();
       renderActivePips();
