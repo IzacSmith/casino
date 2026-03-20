@@ -246,6 +246,20 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 .ach-card.unlocked .ach-card-cat{color:#7a6020}
 .ach-prog-mini{font-family:'Cinzel',serif;font-size:9px;color:#5a4020;margin-top:2px}
 .ach-card.unlocked .ach-prog-mini{color:#8a7030}
+.ach-modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:300;display:flex;align-items:center;justify-content:center;padding:20px;opacity:0;pointer-events:none;transition:opacity .25s}
+.ach-modal-overlay.open{opacity:1;pointer-events:all}
+.ach-modal{background:linear-gradient(160deg,#1a1a25 0%,#0e0e18 100%);border:1px solid #3a3010;border-radius:18px;padding:28px 24px;max-width:320px;width:100%;position:relative;box-shadow:0 20px 60px rgba(0,0,0,.9),0 0 0 1px rgba(212,168,67,.08);transform:scale(.92) translateY(10px);transition:transform .3s cubic-bezier(.34,1.56,.64,1)}
+.ach-modal-overlay.open .ach-modal{transform:scale(1) translateY(0)}
+.ach-modal-close{position:absolute;top:14px;right:16px;background:none;border:none;color:#4a3a18;font-size:18px;cursor:pointer;line-height:1;padding:4px 8px;transition:color .15s}
+.ach-modal-close:hover{color:var(--gold)}
+.ach-modal-icon{width:64px;height:64px;border-radius:14px;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-family:'Cinzel Decorative',serif;font-weight:900;font-size:28px}
+.ach-modal-status{font-family:'Cinzel',serif;font-size:8px;letter-spacing:.3em;text-transform:uppercase;text-align:center;margin-bottom:8px}
+.ach-modal-name{font-family:'Cinzel Decorative',serif;font-size:18px;font-weight:900;color:var(--gold-light);text-align:center;margin-bottom:8px;letter-spacing:.06em}
+.ach-modal-desc{font-family:'Raleway',sans-serif;font-size:12px;color:#7a6a40;text-align:center;line-height:1.6;margin-bottom:14px}
+.ach-modal-cat{display:inline-block;font-family:'Cinzel',serif;font-size:8px;letter-spacing:.2em;text-transform:uppercase;padding:4px 12px;border-radius:20px;border:1px solid #3a2a10;color:#6a5020;margin:0 auto 14px;display:block;text-align:center}
+.ach-modal-prog{font-family:'Cinzel',serif;font-size:13px;color:var(--gold-dark);text-align:center;margin-top:4px}
+.ach-modal.locked-modal .ach-modal-name{color:#4a3a18}
+.ach-modal.locked-modal .ach-modal-desc{color:#4a3a28}
 </style>
 </head>
 <body>
@@ -414,6 +428,17 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
     <div class="ach-toast-label">Achievement Unlocked</div>
     <div class="ach-toast-name" id="ach-toast-name"></div>
     <div class="ach-toast-desc" id="ach-toast-desc"></div>
+  </div>
+</div>
+<div class="ach-modal-overlay" id="ach-modal-overlay" onclick="closeAchModal(event)">
+  <div class="ach-modal" id="ach-modal">
+    <button class="ach-modal-close" onclick="closeAchModal()">&#10005;</button>
+    <div class="ach-modal-icon" id="ach-modal-icon"></div>
+    <div class="ach-modal-status" id="ach-modal-status"></div>
+    <div class="ach-modal-name" id="ach-modal-name"></div>
+    <div class="ach-modal-desc" id="ach-modal-desc"></div>
+    <div class="ach-modal-cat" id="ach-modal-cat"></div>
+    <div class="ach-modal-prog" id="ach-modal-prog"></div>
   </div>
 </div>
 <script src="data.js"></script>

@@ -127,8 +127,36 @@ function renderAchievements() {
         <div class="ach-card-cat">${a.cat}</div>
         ${prog}
       </div>`;
+    card.style.cursor = 'pointer';
+    card.onclick = () => openAchModal(a);
     grid.appendChild(card);
   });
+}
+
+function openAchModal(a) {
+  const isUnlocked = state.achievements.includes(a.id);
+  const iconBg  = isUnlocked ? (ACH_ICON_COLORS[a.icon] || 'rgba(80,60,5,.5)') : 'rgba(30,25,10,.8)';
+  const iconCol = isUnlocked ? (ACH_TEXT_COLORS[a.icon] || '#d4a843') : '#3a3020';
+  const modal = document.getElementById('ach-modal');
+  modal.className = 'ach-modal' + (isUnlocked ? '' : ' locked-modal');
+  const iconEl = document.getElementById('ach-modal-icon');
+  iconEl.style.background = iconBg;
+  iconEl.style.color = iconCol;
+  iconEl.textContent = isUnlocked ? a.icon : '?';
+  const statusEl = document.getElementById('ach-modal-status');
+  statusEl.textContent = isUnlocked ? 'Achievement Unlocked' : 'Locked';
+  statusEl.style.color = isUnlocked ? 'var(--gold-dark)' : '#3a2a10';
+  document.getElementById('ach-modal-name').textContent = isUnlocked ? a.name : '???';
+  document.getElementById('ach-modal-desc').textContent = isUnlocked ? a.desc : 'Keep playing to unlock this achievement.';
+  document.getElementById('ach-modal-cat').textContent = a.cat;
+  const progEl = document.getElementById('ach-modal-prog');
+  progEl.textContent = (!isUnlocked && a.progress) ? a.progress(state) : '';
+  document.getElementById('ach-modal-overlay').classList.add('open');
+}
+
+function closeAchModal(e) {
+  if (e && e.target !== document.getElementById('ach-modal-overlay')) return;
+  document.getElementById('ach-modal-overlay').classList.remove('open');
 }
 
 function showTab(tab, btn) {
